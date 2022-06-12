@@ -4,7 +4,7 @@ import Exceptions.InappropriateArgumentsException;
 
 import java.util.Arrays;
 
-public interface IAction {
+public interface IAction{
 
     boolean action(Object... params);
 
@@ -20,5 +20,7 @@ public interface IAction {
 
         return true;
     }
+
+    NodeItemStack getItemReference();
 
 }
