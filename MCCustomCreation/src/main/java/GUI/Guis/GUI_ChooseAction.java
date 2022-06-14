@@ -1,7 +1,6 @@
 package GUI.Guis;
 
-import GUI.*;
-import GUI.GUIAtrriutes.ChainGUI.ChainHandler;
+import GUI.GUI;
 import GUI.GUIAtrriutes.ChainGUI.IChainable;
 import GUI.GUIAtrriutes.ListGUI.ListableGUI;
 import GUI.GUIAtrriutes.NodeGUI;
@@ -15,7 +14,7 @@ import java.util.stream.Collectors;
 public class GUI_ChooseAction extends ListableGUI implements IChainable , NodeGUI {
 
     public GUI_ChooseAction() {
-        super( new ArrayList<>(NodesHandler.INSTANCE.getActionMap().values().stream().map(action -> action.getItemReference().getItemStack()).collect(Collectors.toList())),"Add Action");
+        super( new ArrayList<>(NodesHandler.INSTANCE.getActionMap().values().stream().map(action -> action.getItemReference().getItemStack()).collect(Collectors.toList())),"Add Action",7,0);
     }
 
     @Override

@@ -1,13 +1,11 @@
 package GUI.Guis;
 
 
-import GUI.*;
-import GUI.GUIAtrriutes.ChainGUI.ChainHandler;
+import GUI.GUI;
 import GUI.GUIAtrriutes.ChainGUI.IChainable;
 import GUI.GUIAtrriutes.ListGUI.ListableGUI;
 import Nodes.Events.IEvent;
 import Nodes.NodesHandler;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
@@ -20,7 +18,7 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable , Listene
     private List<IEvent> eventList;
 
     public GUI_CreateEvent() {
-        super(new ArrayList<>(NodesHandler.INSTANCE.getEvents().values().stream().map(event -> event.getItemReference().getItemStack()).collect(Collectors.toList())),"Create Event");
+        super(new ArrayList<>(NodesHandler.INSTANCE.getEvents().values().stream().map(event -> event.getItemReference().getItemStack()).collect(Collectors.toList())),"Create Event",7,0);
     }
 
 

@@ -2,8 +2,6 @@ package Nodes;
 
 import Exceptions.InappropriateArgumentsException;
 
-import java.util.Arrays;
-
 public interface IAction{
 
     boolean action(Object... params);

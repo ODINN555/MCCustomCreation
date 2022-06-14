@@ -1,6 +1,5 @@
 package GUI.GUIAtrriutes.ChainGUI;
 
-import org.bukkit.block.data.type.Chain;
 import org.bukkit.event.Listener;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package GUI.GUIAtrriutes.ListGUI;
 
-import GUI.GUIAtrriutes.ListGUI.GUIList;
 import GUI.GUIAtrriutes.PageableGUI;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -10,12 +10,15 @@ import java.util.List;
 public class ListableGUI extends PageableGUI implements GUIList {
     private final List<ItemStack> itemsList;
     private final String name;
-    public ListableGUI(List<ItemStack> list,String name) {
+    private int amountInRow;
+    private int prefix;
+    public ListableGUI(List<ItemStack> list,String name,int amountInRow,int prefix) {
         super(0, 0, 0);
         this.itemsList = list;
         this.name = name;
-
-        int size = 9 + (itemsList.size() / 7) * 9 ;
+        this.prefix = prefix;
+        this.amountInRow = amountInRow;
+        int size = 9 + (itemsList.size() / amountInRow) * 9 ;
         maxPageCount = 1 + size / 54;
 
         int currentSize = size <= 54 ? 54 : size;
@@ -25,8 +28,13 @@ public class ListableGUI extends PageableGUI implements GUIList {
 
     @Override
     protected Inventory initInventory() {
-        Inventory inv = getGUIList(null, name,getItemsList());
+        Inventory inv = getGUIList(null, name,getItemsList(),getAmountInRow(),getPrefix());
         return inv;
+    }
+
+    @Override
+    protected void onClick(InventoryClickEvent event) {
+
     }
 
     @Override
@@ -39,11 +47,19 @@ public class ListableGUI extends PageableGUI implements GUIList {
             nextList = itemsList.subList(amountPerPage * from , itemsList.size() -1);
         else nextList = from < to ? itemsList.subList(amountPerPage * from, amountPerPage * to) : itemsList.subList(amountPerPage * to, amountPerPage * from);
 
-        getGUIList(nextList,getInventory());
+        getGUIList(nextList,getInventory(),getAmountInRow(),getPrefix());
         updateInventory();
     }
 
     public List<ItemStack> getItemsList() {
         return itemsList;
+    }
+
+    public int getAmountInRow() {
+        return amountInRow;
+    }
+
+    public int getPrefix() {
+        return prefix;
     }
 }

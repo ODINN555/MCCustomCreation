@@ -1,7 +1,6 @@
 package GUI.Guis;
 
 import GUI.GUI;
-import GUI.GUIAtrriutes.ChainGUI.ChainHandler;
 import GUI.GUIAtrriutes.ChainGUI.IChainable;
 import GUI.GUIAtrriutes.ListGUI.ListableGUI;
 import GUI.GUIAtrriutes.NodeGUI;
@@ -21,7 +20,7 @@ public class GUI_ChoosePrimitive extends ListableGUI implements IChainable, Node
                 .stream()
                 .filter( p -> primitiveTypes.contains(p))
                 .map(prim -> prim.getItemReference().getItemStack())
-                .collect(Collectors.toList())),"Choose a matching value");
+                .collect(Collectors.toList())),"Choose a matching value",7,0);
     }
 
     @Override
