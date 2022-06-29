@@ -1,10 +1,8 @@
 package GUI.GUIAtrriutes;
 
-import GUI.GUI;
+import GUI.AGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -12,18 +10,52 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class PageableGUI extends GUI implements Listener {
+/**
+ * A pageable GUI, this abstract class lets the inherent classes use pages
+ */
+public abstract class PageableGUI extends AGUI {
 
-
+    /**
+     * The gui's current page
+     */
     protected int page;
+
+    /**
+     * The gui's max page count
+     */
     protected int maxPageCount;
+
+    /**
+     * The nextPage ItemStack instance
+     */
     private ItemStack nextPageItemStack;
+
+    /**
+     * The prevPage ItemStack instance
+     */
     private ItemStack prevPageItemStack;
+
+    /**
+     * The nextPage ItemStack instance's slot
+     */
     protected int nextPageSlot;
+
+    /**
+     * The prevPage ItemStack instance's slot
+     */
     protected int previousPageSlot;
 
-    public PageableGUI(int maxPageCount,int nextPageSlot,int previousPageSlot,ItemStack nextPageItemStack, ItemStack prevPageItemStack) {
-        super();
+
+    /**
+     *
+     * @param maxPageCount a given max page count
+     * @param nextPageSlot a given nextPage item slot
+     * @param previousPageSlot a given prevPage item slot
+     * @param nextPageItemStack a given nextPage ItemStack instance
+     * @param prevPageItemStack a given prevPage ItemStack instance
+     */
+    public PageableGUI(String title,int maxPageCount,int nextPageSlot,int previousPageSlot,ItemStack nextPageItemStack, ItemStack prevPageItemStack) {
+        super(title);
         this.maxPageCount = maxPageCount;
         this.nextPageSlot = nextPageSlot;
         this.previousPageSlot = previousPageSlot;
@@ -31,28 +63,47 @@ public abstract class PageableGUI extends GUI implements Listener {
         this.initPrevPageItemStack(prevPageItemStack);
     }
 
-    public PageableGUI(int maxPageCount,int nextPageSlot,int previousPageSlot){
-        super();
+    /**
+     *
+     * @param maxPageCount a given max page count
+     * @param nextPageSlot a given nextPage item slot
+     * @param previousPageSlot a given prevPage item slot
+     */
+    public PageableGUI(String title, int maxPageCount,int nextPageSlot,int previousPageSlot){
+        super(title);
         this.maxPageCount = maxPageCount;
         this.nextPageSlot = nextPageSlot;
         this.previousPageSlot = previousPageSlot;
         this.initNextPageItemStack(Material.ARROW, ChatColor.YELLOW+"Next Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to last page."),1);
         this.initPrevPageItemStack(Material.ARROW, ChatColor.YELLOW+"Previous Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to first page."),1);
+        this.page = 1;
     }
 
-    public PageableGUI(){
-        super();
-        maxPageCount = 1;
+    public PageableGUI(String title){
+        super(title);
+        this.maxPageCount = 1;
+        this.page = 1;
         this.initNextPageItemStack(Material.ARROW, ChatColor.YELLOW+"Next Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to last page."),1);
         this.initPrevPageItemStack(Material.ARROW, ChatColor.YELLOW+"Previous Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to first page."),1);
     }
 
+    /**
+     * handles a page change
+     * @param from the page which the gui is moving from
+     * @param to the page which the gui is moving too
+     */
     protected abstract void onPageChange(int from,int to);
 
+    /**
+     * initializes the page ItemStack instances in the inventory
+     */
     public void initPageItemStacks(){
         if(page > 1)// add previous
             getInventory().setItem(previousPageSlot,prevPageItemStack);
         else getInventory().setItem(previousPageSlot,null);
+
+        System.out.println("page: "+page);
+        System.out.println("max page: "+maxPageCount);
 
         if(page < maxPageCount )
             getInventory().setItem(nextPageSlot,nextPageItemStack);
@@ -62,53 +113,76 @@ public abstract class PageableGUI extends GUI implements Listener {
     }
 
 
-
+    /**
+     *
+     * @param mat a given material
+     * @param name a given name
+     * @param description a given description
+     * @param count a given stack amount
+     * @return a nextPage ItemStack instance with the given parameters
+     */
     private ItemStack initNextPageItemStack(Material mat,String name,List<String> description,int count) {
         ItemStack item = new ItemStack(mat,count);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(description);
-
+        item.setItemMeta(meta);
         this.nextPageItemStack = item;
         return item;
     }
 
+    /**
+     *
+     * @param item a given item
+     * @return a nextPage ItemStack instance with the given parameters
+     */
     private ItemStack initNextPageItemStack(ItemStack item){
         this.nextPageItemStack = item;
         return item;
     }
 
-
+    /**
+     *
+     * @param mat a given material
+     * @param name a given name
+     * @param description a given description
+     * @param count a given stack amount
+     * @return a prevPage ItemStack instance with the given parameters
+     */
     private ItemStack initPrevPageItemStack(Material mat,String name,List<String> description,int count){
         ItemStack item = new ItemStack(mat,count);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
         meta.setLore(description);
-
+        item.setItemMeta(meta);
         this.prevPageItemStack = item;
         return item;
     }
+
+    /**
+     *
+     * @param item a given item
+     * @return a nextPage ItemStack instance with the given parameters
+     */
     private ItemStack initPrevPageItemStack(ItemStack item){
         this.prevPageItemStack = item;
         return item;
     }
 
+    /**
+     *
+     * @param page a given page number
+     * @return the page which the gui is moving to
+     */
     public int setPage(int page){
+        if(page > maxPageCount)
+            page = maxPageCount;
+
         this.onPageChange(this.page,page);
         this.page = page;
         return page;
     }
 
-    @EventHandler
-    public void onInventoryClick(InventoryClickEvent event){
-        if(event.getInventory() == null || event.getClickedInventory() == null)
-            return;
-        if(event.getCurrentItem().equals(nextPageItemStack))
-            setPage((event.isLeftClick()? maxPageCount : page +1));
-
-        if(event.getCurrentItem().equals(prevPageItemStack))
-            setPage((event.isShiftClick()? 0 : page -1));
-    }
 
     @Override
     protected void onOpening(){
@@ -116,4 +190,14 @@ public abstract class PageableGUI extends GUI implements Listener {
         updateInventory();
     }
 
+    @Override
+    protected void onClick(InventoryClickEvent event){
+        if(event.getCurrentItem() == null)
+            return;
+        if(event.getCurrentItem().equals(nextPageItemStack))
+            setPage((event.isLeftClick()? maxPageCount : page +1));
+
+        if(event.getCurrentItem().equals(prevPageItemStack))
+            setPage((event.isShiftClick()? 0 : page -1));
+    }
 }

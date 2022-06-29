@@ -1,24 +1,45 @@
 package GUI.GUIAtrriutes.ChainGUI;
 
 import Exceptions.InappropriateInheritanceException;
-import GUI.GUI;
+import GUI.AGUI;
 
+/**
+ * An interface for chainable GUIs
+ */
 public interface IChainable {
 
-      default void next(IChainable gui){
+    /**
+     * goes to the given gui as the next one in the chain
+     * @param gui a given next gui
+     * @param removeCurrent if to remove the current gui
+     */
+      default void next(IChainable gui,boolean removeCurrent){
            getCurrentGUI().close();
 
            gui.getCurrentGUI().open(getCurrentGUI().getOwner());
-           getHandler().onNext(this,gui);
+           IChainable curr;
+           if(removeCurrent)
+           {
+               getHandler().removeCurrent();
+               curr = getHandler().getCurrentChainable();
+           }else curr = this;
+            getHandler().onNext(curr,gui);
       }
 
-      default GUI getCurrentGUI(){
-          if(this instanceof GUI){
-              return (GUI)this;
-          }else throw new InappropriateInheritanceException(this.getClass().getSimpleName()+" Must inherit GUI");
+    /**
+     *
+     * @return the GUI of the current chain
+     */
+    default AGUI getCurrentGUI(){
+          if(this instanceof AGUI){
+              return (AGUI)this;
+          }else throw new InappropriateInheritanceException(IChainable.class,this.getClass().getSimpleName()+" Must inherit AGUI");
       }
 
-     default void prev(){
+    /**
+     * moving to the previous chainable in the chain. removes the current gui!
+     */
+    default void prev(){
          IChainable prev = getHandler().onPrev(this);
          getCurrentGUI().close();
          if(prev == null)
@@ -27,7 +48,19 @@ public interface IChainable {
          prev.getCurrentGUI().open(getCurrentGUI().getOwner());
      }
 
+    /**
+     *
+     * @return the handler of this chainable
+     */
      default ChainHandler getHandler(){
           return ChainHandler.getHandler(getCurrentGUI().getOwner().getUniqueId());
+     }
+
+    /**
+     * handles a close of the chainable gui, this is an override for GUI onClose function
+     */
+    default void onClosing(){
+        //TODO check if this actually works
+            ChainHandler.remove(getCurrentGUI().getOwner().getUniqueId());
      }
 }

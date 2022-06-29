@@ -1,7 +1,11 @@
 package Exceptions;
 
-public class InappropriateInheritanceException extends RuntimeException{
-    public InappropriateInheritanceException(String msg){
-        super("Inappropriate Inheritance: "+ msg);
+/**
+ * an inappropriate inheritance exception occurs
+ * when a certain object must inherit a certain class but it doesn't.
+ */
+public class InappropriateInheritanceException extends ACustomMCException{
+    public InappropriateInheritanceException(Class caller,String msg){
+        super(InappropriateInheritanceException.class.getSimpleName(),caller,msg);
     }
 }

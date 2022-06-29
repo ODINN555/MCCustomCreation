@@ -5,6 +5,9 @@ import com.sun.istack.internal.Nullable;
 
 import java.io.Serializable;
 
+/**
+ * An enum for default events
+ */
 public enum DefaultEvents implements Serializable,IEvent {
     RIGHT_CLICK("RIGHT_CLICK", null),
     LEFT_CLICK("LEFT_CLICK",null),
@@ -12,7 +15,14 @@ public enum DefaultEvents implements Serializable,IEvent {
     SHIFT_LEFT_CLICK("SHIFT_LEFT_CLICK",null)
     ;
 
+    /**
+     * The event's key
+     */
     private String key;
+
+    /**
+     * The event's nodeItemStack
+     */
     private NodeItemStack nodeItemStack;
 
     DefaultEvents(String key, @Nullable NodeItemStack nodeItemStack){

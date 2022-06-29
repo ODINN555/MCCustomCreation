@@ -5,13 +5,22 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+/**
+ * An interface for returnable GUIs
+ */
 public interface IReturnable extends IChainable{
 
-
+    /**
+     * handles a click on the return button
+     */
     default void onReturnClicked(){
         prev();
     }
 
+    /**
+     *
+     * @return the default return button ItemStack instance
+     */
     default ItemStack getDefaultReturnItemStack(){
 
         Material DEFAULT_MATERIAL = Material.HOPPER;
@@ -26,5 +35,8 @@ public interface IReturnable extends IChainable{
         return itemStack;
     }
 
+    /**
+     * initializes the returnItem ItemStack instance in the inventory
+     */
     void initReturnItemInInventory();
 }

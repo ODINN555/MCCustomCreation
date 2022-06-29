@@ -5,6 +5,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * An enum of default display types
+ */
 public enum DefaultDisplayTypes implements DisplayType{
 
     INTEGER(Integer.class, ItemStackUtil.newItemStack(Material.BLUE_STAINED_GLASS_PANE, ChatColor.BLUE+"Integer")),
@@ -14,7 +17,13 @@ public enum DefaultDisplayTypes implements DisplayType{
     ;
 
 
+    /**
+     * The display type
+     */
     private Class type;
+    /**
+     * The ItemStack being displayed
+     */
     private ItemStack displayItem;
 
 

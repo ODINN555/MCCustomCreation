@@ -1,28 +1,80 @@
 package Nodes;
 
+import Utility.ItemStackUtil;
 import Utility.PDCUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
+import java.util.List;
 
+/**
+ * A class representing a node as ItemStack
+ */
 public class NodeItemStack implements Serializable {
 
+    /**
+     * The Persistent Data Container key for NodeItemStack items
+     */
+    private static final String PDC_KEY = "NodeItemStack";
+
+    /**
+     * The item's material
+     */
     private Material material;
+
+    /**
+     * The item's display name
+     */
     private String display;
-    private String description;
-    private Class classRef;
+
+    /**
+     * The item's lore
+     */
+    private List<String> lore;
+
+    /**
+     * The item's node class reference
+     */
+    private INode classRef;
+
+    /**
+     * The item's stack amount
+     */
     private int stackAmount;
+
+    /**
+     * The item's ItemStack instance
+     */
     private ItemStack itemStack;
 
-    public NodeItemStack(Material material, String display, String description, int stackAmount, Class classRef) {
+
+    /**
+     *
+     * @param material a given material
+     * @param display a given display name
+     * @param lore a given lore
+     * @param stackAmount a given stack amount
+     * @param classRef a given class reference
+     */
+    public NodeItemStack(Material material, String display, List<String> lore, int stackAmount, INode classRef) {
         this.material = material;
         this.display = display;
-        this.description = description;
+        this.lore = lore;
         this.stackAmount = stackAmount;
         this.classRef = classRef;
 
-        this.itemStack = new ItemStack(material,stackAmount);
+        this.itemStack = ItemStackUtil.newItemStack(material,display,lore,stackAmount);
+        this.setNodePDC();
+    }
+
+    /**
+     *
+     * @param item a given ItemStack instance
+     * @param classRef a given class reference
+     */
+    public NodeItemStack(ItemStack item,INode classRef){
+        this(item.getType(),item.getItemMeta().getDisplayName(),item.getItemMeta().getLore(),item.getAmount(),classRef);
     }
 
     public Material getMaterial() {
@@ -41,19 +93,19 @@ public class NodeItemStack implements Serializable {
         this.display = display;
     }
 
-    public String getDescription() {
-        return description;
+    public List<String> getLore() {
+        return lore;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(List<String> lore) {
+        this.lore = lore;
     }
 
-    public Class getClassRef() {
-        return classRef;
+    public INode getClassRef() {
+        return this.classRef;
     }
 
-    public void setClassRef(Class classRef) {
+    public void setClassRef(INode classRef) {
         this.classRef = classRef;
     }
 
@@ -62,13 +114,30 @@ public class NodeItemStack implements Serializable {
     }
 
 
+    /**
+     *
+     * @param item a given item
+     * @return if the given item is a NodeItemStack
+     */
     public static boolean isNodeItemStack(ItemStack item){
-        return PDCUtil.has(item,"NodeItemStack",NodeItemStack.class);
+        return PDCUtil.has(item,PDC_KEY,NodeItemStack.class);
     }
 
+    /**
+     * sets this NodeItemStack instance inside the PDC of this ItemStack instance
+     */
+    private final void setNodePDC(){
+        PDCUtil.set(this.itemStack,PDC_KEY,NodeItemStack.class,this);
+    }
+
+    /**
+     *
+     * @param item a given item
+     * @return the NodeItemStack reference from the PDC of the item
+     */
     public static NodeItemStack getNodeFromItem(ItemStack item){
         if(!isNodeItemStack(item))
             return null;
-        return PDCUtil.get(item,"NodeItemStack",NodeItemStack.class);
+        return PDCUtil.get(item,PDC_KEY,NodeItemStack.class);
     }
 }

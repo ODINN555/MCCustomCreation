@@ -6,9 +6,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
+/**
+ * An utility class for ItemStack objects
+ */
 public class ItemStackUtil {
 
 
+    /**
+     * creates a new ItemStack instance with the given settings
+     * @param mat a given material
+     * @param name a given name
+     * @param description a given lore
+     * @param amount a given stack amount
+     * @return the new ItemStack instance
+     */
     public static ItemStack newItemStack(Material mat, String name, List<String> description,int amount){
         ItemStack item = new ItemStack(mat,amount);
         ItemMeta meta = item.getItemMeta();
@@ -21,15 +32,37 @@ public class ItemStackUtil {
         return item;
     }
 
-
+    /**
+     *
+     * creates a new ItemStack instance with the given settings
+     * @param mat a given material
+     * @param name a given name
+     * @param description a given lore
+     * @return the new ItemStack instance
+     */
     public static ItemStack newItemStack(Material mat,String name,List<String> description){
         return newItemStack(mat,name,description,1);
     }
 
+    /**
+     *
+     * creates a new ItemStack instance with the given settings
+     * @param mat a given material
+     * @param name a given name
+     * @return the new ItemStack instance
+     */
     public static ItemStack newItemStack(Material mat,String name) {
         return newItemStack(mat,name,null);
     }
 
+    /**
+     *
+     * creates a new ItemStack instance with the given settings
+     * @param mat a given material
+     * @param name a given name
+     * @param amount a given stack amount
+     * @return the new ItemStack instance
+     */
     public static ItemStack newItemStack(Material mat,String name, int amount) {
     return newItemStack(mat,name,null,amount);
     }

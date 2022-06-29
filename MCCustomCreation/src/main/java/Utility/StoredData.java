@@ -8,16 +8,20 @@ import org.bukkit.util.io.BukkitObjectOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
+/**
+ * A PersistentDataType generic class, allows any Serializable object to be serialized inside an PDC
+ * @param <T> The stored data type
+ */
 public class StoredData<T> implements PersistentDataType<byte[] ,T> {
 
+    /**
+     * The stored data class type
+     */
     private Class<T> dataClass;
 
     public StoredData(Class<T> dataClass){
         this.dataClass = dataClass;
     }
-
-
-
 
     @Override
     public Class<T> getComplexType() {

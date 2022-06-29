@@ -1,7 +1,12 @@
 package GUI.Layout;
 
+/**
+ * An enum for default LayoutOptions
+ */
 public enum LayoutOption implements Layout{
-
+    /**
+     * This layout tries to make as much spaces as possible between items
+     */
     SPACES{
         @Override
         public LayoutValue getSlotsByLayout(int itemAmount) {
@@ -41,6 +46,9 @@ public enum LayoutOption implements Layout{
             }
             return new LayoutValue(size,slots);
         }},
+    /**
+     * Creates as many groups as it can with the given item amount
+     */
     GROUPS{
         @Override
         public LayoutValue getSlotsByLayout(int itemAmount) {
@@ -73,6 +81,9 @@ public enum LayoutOption implements Layout{
             }
         }
     },
+    /**
+     * Centers the items as much as possible
+     */
     CENTERED{
         @Override
         public LayoutValue getSlotsByLayout(int itemAmount) {
@@ -87,12 +98,16 @@ public enum LayoutOption implements Layout{
 
                 int startPoint= itemAmount > 9? itemAmount - itemAmount % 9 : 0;
                 int size = (itemAmount / 9 + 1)*9;
-                    int[] arr = new int[size];
-                    int space = (itemAmount%9)/2; // the amount left, half to 2 for the space of each side
+                    int[] arr = new int[itemAmount];
+                    int space = (9 - (itemAmount%9))/2; // the amount left, half to 2 for the space of each side
                     for(int i = 0; i< startPoint; i++)
                         arr[i] = i;
+                    int index = 0;
                     for(int i = space+startPoint; i<size-space; i++)
-                        arr[i] = i;
+                    {
+                        arr[index] = i;
+                        index++;
+                    }
 
 
             return new LayoutValue(size,arr);
@@ -100,6 +115,11 @@ public enum LayoutOption implements Layout{
     }
     ;
 
+    /**
+     *
+     * @param rows a given row amount
+     * @return a list containing all slots numbers of the given rows amount
+     */
     private static int[] getAllSlots(int rows){
         int size = rows > 5 ? 54 : rows * 9;
         int[] arr = new int[size];
@@ -109,6 +129,12 @@ public enum LayoutOption implements Layout{
         return arr;
     }
 
+    /**
+     *
+     * @param itemAmount a given itemAmount
+     * @param rows given rows amount
+     * @return if the itemAmount and the rows are valid
+     */
     boolean isValid(int itemAmount, int rows){
         if(rows > 5)
             return false;
