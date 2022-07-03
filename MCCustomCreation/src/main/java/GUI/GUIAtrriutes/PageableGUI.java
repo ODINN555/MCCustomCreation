@@ -1,6 +1,7 @@
 package GUI.GUIAtrriutes;
 
 import GUI.AGUI;
+import Utility.ItemStackUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -59,6 +60,8 @@ public abstract class PageableGUI extends AGUI {
         this.maxPageCount = maxPageCount;
         this.nextPageSlot = nextPageSlot;
         this.previousPageSlot = previousPageSlot;
+        this.page = 1;
+
         this.initNextPageItemStack(nextPageItemStack);
         this.initPrevPageItemStack(prevPageItemStack);
     }
@@ -70,22 +73,9 @@ public abstract class PageableGUI extends AGUI {
      * @param previousPageSlot a given prevPage item slot
      */
     public PageableGUI(String title, int maxPageCount,int nextPageSlot,int previousPageSlot){
-        super(title);
-        this.maxPageCount = maxPageCount;
-        this.nextPageSlot = nextPageSlot;
-        this.previousPageSlot = previousPageSlot;
-        this.initNextPageItemStack(Material.ARROW, ChatColor.YELLOW+"Next Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to last page."),1);
-        this.initPrevPageItemStack(Material.ARROW, ChatColor.YELLOW+"Previous Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to first page."),1);
-        this.page = 1;
+        this(title,maxPageCount,nextPageSlot,previousPageSlot,getDefaultNextPageItemStack(),getDefaultPrevPageItemStack());
     }
 
-    public PageableGUI(String title){
-        super(title);
-        this.maxPageCount = 1;
-        this.page = 1;
-        this.initNextPageItemStack(Material.ARROW, ChatColor.YELLOW+"Next Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to last page."),1);
-        this.initPrevPageItemStack(Material.ARROW, ChatColor.YELLOW+"Previous Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to first page."),1);
-    }
 
     /**
      * handles a page change
@@ -143,6 +133,14 @@ public abstract class PageableGUI extends AGUI {
 
     /**
      *
+     * @return the default next page ItemStack instance
+     */
+    public static ItemStack getDefaultNextPageItemStack(){
+        return ItemStackUtil.newItemStack(Material.ARROW, ChatColor.YELLOW+"Next Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to last page."),1);
+    }
+
+    /**
+     *
      * @param mat a given material
      * @param name a given name
      * @param description a given description
@@ -167,6 +165,14 @@ public abstract class PageableGUI extends AGUI {
     private ItemStack initPrevPageItemStack(ItemStack item){
         this.prevPageItemStack = item;
         return item;
+    }
+
+    /**
+     *
+     * @return the default previous page ItemStack instance
+     */
+    public static ItemStack getDefaultPrevPageItemStack(){
+        return ItemStackUtil.newItemStack(Material.ARROW, ChatColor.YELLOW+"Previous Page", Arrays.asList(ChatColor.GRAY+"Shift + Click to go to first page."),1);
     }
 
     /**

@@ -218,7 +218,6 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         if(removeMode)
             setRemoveModeView();
         else setNormalView();
-
     }
 
     /**

@@ -55,19 +55,18 @@ public class NodesHandler {
     }
 
     public void register(INode obj){
-        if(obj instanceof IAction){
-            IAction action =  (IAction) obj;
-            actionMap.put(action.getClass().getSimpleName(),action);
-        }else if(obj instanceof IParameter){
-           IParameter param =  (IParameter) obj;
-            parameterMap.put(param.getClass().getSimpleName(),param);
-        }else if(obj instanceof IPrimitive){
-            IPrimitive prim =  (IPrimitive) obj;
-            primitiveMap.put(prim.getClass().getSimpleName(),prim);
-        }else if(obj instanceof IEvent){
-            IEvent event = (IEvent) obj;
-            events.put(event.getKey(),event);
-        }
+        if(obj instanceof IAction)
+            putInMap(actionMap,(IAction) obj);
+        else if(obj instanceof IParameter)
+            putInMap(parameterMap,(IParameter) obj);
+        else if(obj instanceof IPrimitive)
+            putInMap(primitiveMap,(IPrimitive) obj);
+        else if(obj instanceof IEvent)
+            putInMap(events,(IEvent) obj);
+    }
+
+    private <T> void putInMap(Map<String,T> map,T obj){
+        map.put(obj.getClass().getSimpleName(),obj);
     }
 
     /**

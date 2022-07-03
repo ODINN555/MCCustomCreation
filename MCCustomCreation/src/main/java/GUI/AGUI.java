@@ -95,10 +95,10 @@ public abstract class AGUI {
      * updates the inventory with any changes occurred to it
      */
     protected final void updateInventory(){
-        if(getOwner() == null)
-            return;
-
-        Bukkit.getScheduler().runTaskLater(Main.getInstance(), () -> getOwner().updateInventory(),1);
+        if(getOwner() != null)
+            Bukkit.getScheduler().runTaskLater(Main.getInstance(),
+                    () -> getOwner().updateInventory(),
+                    1);
     }
 
     /**

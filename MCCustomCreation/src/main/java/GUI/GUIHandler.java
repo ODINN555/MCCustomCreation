@@ -48,12 +48,10 @@ public class GUIHandler implements Listener {
      * @param player a given player
      */
     public void closeGUI(Player player){
-        if(!this.guis.containsKey(player.getUniqueId()))
-            return;
-
-
-        this.guis.remove(player.getUniqueId()).onClosing();
-        player.closeInventory();
+        if(this.guis.containsKey(player.getUniqueId())) {
+            this.guis.remove(player.getUniqueId()).onClosing();
+            player.closeInventory();
+        }
     }
 
     /**
@@ -84,11 +82,9 @@ public class GUIHandler implements Listener {
      */
     @EventHandler
     public void onClick(InventoryClickEvent event){
-        if(event.getInventory() == null || event.getClickedInventory() == null)
-            return;
-
-        if(guis.containsKey(event.getWhoClicked().getUniqueId()))
-            guis.get(event.getWhoClicked().getUniqueId()).onClick(event);
+        if(event.getInventory() != null && event.getClickedInventory() != null)
+            if(guis.containsKey(event.getWhoClicked().getUniqueId()))
+                guis.get(event.getWhoClicked().getUniqueId()).onClick(event);
     }
 
 }

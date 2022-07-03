@@ -15,7 +15,7 @@ public class CMD_Test implements CommandExecutor {
             return false;
 
         runTest(sender,args);
-        return false;
+        return true;
     }
 
     /**

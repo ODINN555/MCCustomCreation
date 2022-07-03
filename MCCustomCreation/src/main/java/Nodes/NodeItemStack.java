@@ -113,7 +113,6 @@ public class NodeItemStack implements Serializable {
         return this.itemStack;
     }
 
-
     /**
      *
      * @param item a given item
@@ -136,8 +135,6 @@ public class NodeItemStack implements Serializable {
      * @return the NodeItemStack reference from the PDC of the item
      */
     public static NodeItemStack getNodeFromItem(ItemStack item){
-        if(!isNodeItemStack(item))
-            return null;
-        return PDCUtil.get(item,PDC_KEY,NodeItemStack.class);
+        return isNodeItemStack(item) ? PDCUtil.get(item,PDC_KEY,NodeItemStack.class) : null;
     }
 }

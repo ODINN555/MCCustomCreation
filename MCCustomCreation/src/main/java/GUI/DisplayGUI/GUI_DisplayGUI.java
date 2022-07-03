@@ -75,9 +75,11 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
     protected Inventory initInventory() {
 
         LayoutValue val = LayoutOption.CENTERED.getSlotsByLayout(this.primitives.length);
+
         if(val.size == 54) // TODO warn/error max primitives allowed is less than 45
             val.size -= 9;
         Inventory inv = Bukkit.createInventory(null,val.size + 9,this.node.getItemReference().getDisplay());
+
         for (int i = 0; i < inv.getSize(); i++)
             inv.setItem(i,getDefaultBlankItem());
         for (int i = 0; i < val.slots.length; i++)
@@ -111,12 +113,7 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
                 GUI_DisplayGUI gui = new GUI_DisplayGUI(nextPrimitives,(INode) next.getCurrent(),next);
                 this.next(gui,false);
             }
-
         }
-
-
-
-
     }
 
     @Override
@@ -124,7 +121,6 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
             this.returnButton = getDefaultReturnItemStack();
             getInventory().setItem(0,returnButton);
     }
-
 
     @Override
     public void onClosing() {
