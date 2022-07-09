@@ -1,5 +1,7 @@
 package GUI.GUIAtrriutes.ChainGUI;
 
+import com.sun.istack.internal.NotNull;
+
 import java.util.*;
 
 /**
@@ -38,13 +40,18 @@ public class ChainHandler {
      * @param next a given next chainable gui
      * @return the next chainable gui
      */
-    public static IChainable onNext(IChainable curr,IChainable next){
+    public static IChainable onNext(@NotNull IChainable curr, IChainable next){
+        System.out.print(" , handler next: " + (curr.getHandler() == null ? "handler null" : "chain: " + curr.getHandler().chain)+"\n");
         UUID ownerId = curr.getCurrentGUI().getOwner().getUniqueId();
         if(getHandler(ownerId) == null)
             setHandler(ownerId,new ChainHandler(curr));
-        ChainHandler handler = getHandler(ownerId);
-        handler.chain.add(next);
+
+        getHandler(ownerId).chain.add(next);
+
+        System.out.println("\n after next: " + getHandler(ownerId).chain);
         return next;
+
+
     }
 
     /**
@@ -53,18 +60,18 @@ public class ChainHandler {
      * @return the new current gui
      */
     public static IChainable onPrev(IChainable current){
+        System.out.print(" , handler: " + (current.getHandler() == null ? "handler null" : current.getHandler().chain)+"\n");
         UUID ownerId = current.getCurrentGUI().getOwner().getUniqueId();
         if(getHandler(ownerId) == null)
             return null;
 
-        ChainHandler handler = getHandler(ownerId);
-        handler.chain.remove(handler.chain.size() -1);
-        if(handler.chain.size() == 0) {
+        getHandler(ownerId).chain.remove(getHandler(ownerId).chain.size() -1);
+        if(getHandler(ownerId).chain.size() == 0) {
             remove(ownerId);
             return null;
         }
-
-        return handler.chain.get(handler.chain.size() -1);
+        System.out.println("\n after prev: " + getHandler(ownerId).chain);
+        return getHandler(ownerId).chain.get(getHandler(ownerId).chain.size() -1);
     }
 
     /**
@@ -73,6 +80,7 @@ public class ChainHandler {
      * @return the chain handler of the given player
      */
     public static ChainHandler getHandler(UUID id){
+        System.out.println("handlers: "+handlers);
         return handlers.get(id);
     }
 
@@ -119,7 +127,7 @@ public class ChainHandler {
      * @return the current chainable gui
      */
     public IChainable getCurrentChainable(){
-        if(chain == null)
+        if(chain == null || chain.size() == 0)
             return null;
         return this.chain.get(this.chain.size() -1);
     }

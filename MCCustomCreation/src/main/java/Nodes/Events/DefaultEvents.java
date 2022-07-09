@@ -1,5 +1,6 @@
 package Nodes.Events;
 
+import Nodes.INode;
 import Nodes.NodeItemStack;
 import com.sun.istack.internal.Nullable;
 
@@ -38,5 +39,8 @@ public enum DefaultEvents implements Serializable,IEvent {
     public NodeItemStack getItemReference(){
         return this.nodeItemStack == null ? getDefault() : this.nodeItemStack;
     }
+
+
+
 
 }

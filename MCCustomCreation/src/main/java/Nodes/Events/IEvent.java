@@ -12,12 +12,6 @@ import java.util.Locale;
  */
 public interface IEvent extends INode {
     /**
-     *
-     * @return The event's key
-     */
-    String getKey();
-
-    /**
      * The default event node item material
      */
     Material DEFAULT_EVENT_MATERIAL = Material.RED_STAINED_GLASS_PANE;

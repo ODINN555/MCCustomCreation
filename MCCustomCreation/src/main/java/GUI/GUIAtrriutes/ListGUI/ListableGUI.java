@@ -4,6 +4,7 @@ import GUI.GUIAtrriutes.PageableGUI;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ public class ListableGUI extends PageableGUI implements IGUIList {
     /**
      * The item list
      */
-    private final List<ItemStack> itemsList;
+    protected List<ItemStack> itemsList;
 
 
     /**
@@ -112,7 +113,7 @@ public class ListableGUI extends PageableGUI implements IGUIList {
     }
 
     public List<ItemStack> getItemsList() {
-        return itemsList;
+        return this.itemsList;
     }
 
     public int getAmountInRow() {
@@ -121,5 +122,11 @@ public class ListableGUI extends PageableGUI implements IGUIList {
 
     public int getPrefix() {
         return prefix;
+    }
+
+    @Override
+    protected void onOpening() {
+        super.onOpening();
+        getGUIList(getItemsList(),getInventory(),getAmountInRow(),getPrefix());
     }
 }

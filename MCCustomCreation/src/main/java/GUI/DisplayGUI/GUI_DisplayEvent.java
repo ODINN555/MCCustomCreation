@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
  */
 public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
 
+    private IEvent event;
     /**
      * The returnItem ItemStack instance of this GUI
      */
@@ -65,23 +67,27 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      * A map containing all the IActions of the event which is displayed by this GUI and their FunctionTree reference
      */
     private Map<IAction,FunctionTree> actionsOfTrees;
-
+    private List<FunctionTree> functionList;
     /**
      *
      * @param actions a given FunctionTree list referencing IActions
      * @param event a given event
      */
     public GUI_DisplayEvent(@NotNull List<FunctionTree> actions, IEvent event) {
-        super(actions.stream()
-                .filter(obj -> (obj.getCurrent() instanceof IAction))
-                .map(action -> ((IAction)action.getCurrent()).getItemReference().getItemStack())
-                .collect(Collectors.toList())
-                , "Actions for event "+event.getDefault().getDisplay(),6,0);
+        super(getActionsAsItemStacks(actions), "Actions for event "+event.getDefault().getDisplay(),6,0);
         this.actionsOfTrees = new HashMap<>();
+        this.functionList = actions;
         for (FunctionTree action : actions)
             actionsOfTrees.put((IAction) action.getCurrent(),action);
         this.removeMode = false;
+        this.event = event;
+    }
 
+    private static List<ItemStack> getActionsAsItemStacks(List<FunctionTree> actions){
+        return actions.stream()
+                .filter(obj -> (obj.getCurrent() instanceof IAction))
+                .map(action -> ((IAction)action.getCurrent()).getItemReference().getItemStack())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -98,6 +104,13 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
 
     @Override
     public void onOpening(){
+
+        if(actionsOfTrees.containsKey(null)){
+            actionsOfTrees.put((IAction) actionsOfTrees.get(null).getCurrent(),actionsOfTrees.get(null));
+            actionsOfTrees.remove(null);
+            this.itemsList = getActionsAsItemStacks(actionsOfTrees.values().stream().collect(Collectors.toList()));
+        }
+        super.onOpening();
         if(removeMode)
             removeMode = false;
         initAddActionItemInInventory();
@@ -105,6 +118,7 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         initReturnItemInInventory();
         updateInventory();
     }
+
     @Override
     public void initReturnItemInInventory() {
         this.returnItemInstance = getDefaultReturnItemStack();
@@ -170,29 +184,33 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      */
     public void onActionNodeClicked(@NotNull NodeItemStack node){
         IAction action = (IAction) node.getClassRef();
-        if(!this.actionsOfTrees.containsKey(action)) //TODO put error here
+        if(getKeyByName(action.getKey()) == null) //TODO put error here
             return;
         if(removeMode)
         {
-            this.actionsOfTrees.remove(action);
-            this.toggleRemoveMode();
-            return;
+            this.functionList.remove(this.actionsOfTrees.get(getKeyByName(action.getKey())));
+            this.actionsOfTrees.remove(getKeyByName(action.getKey()));
+            GUI_DisplayEvent gui = new GUI_DisplayEvent(this.actionsOfTrees.values().stream().collect(Collectors.toList()), this.event);
+            this.next(gui,true);
+        }else {
+            GUI_DisplayGUI gui = new GUI_DisplayGUI(action, this.actionsOfTrees.get(getKeyByName(action.getKey())));
+            this.next(gui, false);
         }
-
-        GUI_DisplayGUI gui = new GUI_DisplayGUI(action,this.actionsOfTrees.get(action));
-        this.next(gui,false);
     }
 
     /**
      * handles a click
      */
     public void onAddActionClicked(){
+        FunctionTree tree = new FunctionTree(null);
+        actionsOfTrees.put(null,tree);
+        functionList.add(tree);
         GUI_ChooseGUI gui = new GUI_ChooseGUI(NodesHandler.INSTANCE.getActionMap().values().stream()
                 .filter(action ->{ // filter the ones already exists, if duplicable then it gets displayed
-            if(getKeyByName(action.getClass().getSimpleName()) == null)
+            if(getKeyByName(action.getKey()) == null)
                 return true;
             else return (action instanceof IDuplicableAction);
-        }).collect(Collectors.toList()),null,"Choose Action");
+        }).collect(Collectors.toList()),tree,"Choose Action");
 
         this.next(gui,false);
     }
@@ -204,7 +222,7 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      */
     public IAction getKeyByName(String key){
         for (IAction action : this.actionsOfTrees.keySet())
-           if(action.getClass().getSimpleName().equalsIgnoreCase(key))
+           if(action != null && action.getKey().equalsIgnoreCase(key))
                return action;
         return null;
     }
@@ -249,4 +267,6 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         getInventory().setItem(removeActionSlot,removeActionItemInstance);
         updateInventory();
     }
+
+
 }

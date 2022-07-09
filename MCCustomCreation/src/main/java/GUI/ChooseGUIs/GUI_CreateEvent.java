@@ -12,10 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -53,9 +50,11 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
 
     @Override
     protected void onClick(InventoryClickEvent event){
+
         if(event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR))
             return;
         event.setCancelled(true); // no item should be grabbed, then event should always be cancelled
+
 
         ItemStack currentItem = event.getCurrentItem();
 
@@ -67,6 +66,7 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
     /**
      * on event node being clicked in the GUI
      * @param item The clicked item node
+     *
      */
     private void onEventNodeClicked(NodeItemStack item){
         if(item == null)
@@ -75,7 +75,11 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
         GUI_DisplayEvent gui;
         if(containsEvent(event.getKey()))
             gui = new GUI_DisplayEvent(getByName(event.getKey()),event);
-        else gui = new GUI_DisplayEvent(event);
+        else{
+            List<FunctionTree> list = new ArrayList<>();
+            events.put(event,list);
+            gui = new GUI_DisplayEvent(list,event);
+        }
         //TODO register current build to chosen event
 
 

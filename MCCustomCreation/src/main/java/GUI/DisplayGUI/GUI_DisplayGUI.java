@@ -85,7 +85,7 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
         for (int i = 0; i < val.slots.length; i++)
         {
             inv.setItem(val.slots[i] + 9,DisplayTypesHandler.INSTANCE.getByType(this.primitives[i]).getDisplayItem());
-            this.slotsOfIndexes.put(val.slots[i],i);
+            this.slotsOfIndexes.put(9+val.slots[i],i);
         }
 
         return inv;
@@ -149,5 +149,11 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
 
     public void setNode(INode node) {
         this.node = node;
+    }
+
+    @Override
+    public void onOpening(){
+        super.onOpening();
+        initReturnItemInInventory();
     }
 }

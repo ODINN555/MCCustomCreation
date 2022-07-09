@@ -4,10 +4,16 @@ import Nodes.Events.IEvent;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * An object representing a node as a part of a tree which represents a Function
  */
-public class FunctionTree {
+public class FunctionTree implements Serializable {
 
     /**
      * The current object
@@ -139,14 +145,73 @@ public class FunctionTree {
         this.prev = prev;
     }
 
+    public FunctionTree getFather(){
+        FunctionTree prev = this;
+        while(prev.getPrev() != null)
+            prev = prev.getPrev();
+        return prev;
+    }
 
-    /**
-     * saves a given tree
-     * @param tree a given tree
-     * @return if the tree was saved successfully
-     */
-    public static boolean saveTree(FunctionTree tree){
-        //TODO
-        return false;
+    public Map<String,Object> serialize(){
+        return this.serialize(this);
+    }
+
+    private Map<String,Object> serialize(FunctionTree tree){
+        Map<String,Object> map = new HashMap<>();
+
+        putDefaultTreeValues(tree,map);
+        List<Map<String,Object>> values = new ArrayList<>();
+        if(tree.getNext() != null)
+        for (FunctionTree functionTree : tree.getNext())
+            values.add(serialize(functionTree));
+
+        if(!values.isEmpty())
+            map.put("Values",values);
+        else if(tree.getCurrent() instanceof TruePrimitive)
+            map.put("Value",((TruePrimitive) tree.getCurrent()).getValue());
+
+        return map;
+
+    }
+
+    public static FunctionTree deserialize(FunctionTree prev ,Map<String,Object> map) throws CloneNotSupportedException {
+        FunctionTree tree = new FunctionTree(NodesHandler.INSTANCE.getNodeByName((String) map.get("Name")),null,prev);
+        List<Map<String,Object>> list = (List) map.get("Values");
+        if(tree.getCurrent() instanceof TruePrimitive)
+            ((TruePrimitive) tree.getCurrent()).setValue(map.get("Value"));
+        else {
+            FunctionTree[] next = new FunctionTree[list.size()];
+            for (int i = 0; i < list.size(); i++)
+                next[i] = deserialize(tree,list.get(i));
+            tree.setNext(next);
+        }
+
+        return tree;
+
+    }
+
+    private void putDefaultTreeValues(FunctionTree tree, Map<String,Object> map){
+        map.put("Name",((INode) tree.getCurrent()).getKey());
+
+    }
+
+    public String toString(){
+        return FunctionTree.toString(this);
+    }
+    private static String toString(FunctionTree tree){
+        String str = "";
+        String key;
+        if(tree == null || tree.getCurrent() == null)
+            key = "null";
+        else key = ((INode)tree.getCurrent()).getKey();
+
+        str+="- "+key+": \n";
+        if(tree != null && tree.getNext() != null) {
+            str+="Next: \n";
+            for (FunctionTree functionTree : tree.getNext())
+                str += toString(functionTree);
+        }
+
+        return str;
     }
 }

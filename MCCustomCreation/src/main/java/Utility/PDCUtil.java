@@ -4,7 +4,10 @@ import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
+
+import java.util.Arrays;
 
 /**
  * An utility class for Persistent Data Container
@@ -103,7 +106,9 @@ public class PDCUtil {
      * @param value a given value
      */
     public static <T> void set(ItemStack container,String key,Class<T> clazz,T value){
-        container.getItemMeta().getPersistentDataContainer().set(new NamespacedKey(Main.getInstance(),key),new StoredData<>(clazz),value);
+        ItemMeta meta =container.getItemMeta();
+        set(meta.getPersistentDataContainer(),key,clazz,value);
+        container.setItemMeta(meta);
     }
 
     /**

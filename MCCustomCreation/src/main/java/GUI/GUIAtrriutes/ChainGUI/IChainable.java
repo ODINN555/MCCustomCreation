@@ -14,16 +14,20 @@ public interface IChainable {
      * @param removeCurrent if to remove the current gui
      */
       default void next(IChainable gui,boolean removeCurrent){
-           getCurrentGUI().close();
 
-           gui.getCurrentGUI().open(getCurrentGUI().getOwner());
+            System.out.println("before next: "+gui.getCurrentGUI().getClass().getSimpleName()+" , "+getCurrentGUI().getClass().getSimpleName()+" , "+getHandler());
+
            IChainable curr;
            if(removeCurrent)
            {
                getHandler().removeCurrent();
                curr = getHandler().getCurrentChainable();
            }else curr = this;
-            getHandler().onNext(curr,gui);
+            System.out.println("going to onNext");
+            ChainHandler.onNext(curr,gui);
+            getCurrentGUI().close();
+            gui.getCurrentGUI().open(getCurrentGUI().getOwner());
+
       }
 
     /**
@@ -40,12 +44,16 @@ public interface IChainable {
      * moving to the previous chainable in the chain. removes the current gui!
      */
     default void prev(){
-         IChainable prev = getHandler().onPrev(this);
+        System.out.println("before prev: "+getCurrentGUI().getClass().getSimpleName()+" , "+getHandler()+" , Owner: "+getCurrentGUI().getOwner()+". ");
+        IChainable prev = ChainHandler.onPrev(this);
+        System.out.println("after getPrev");
          getCurrentGUI().close();
+        System.out.println("after close");
          if(prev == null)
              return;
 
          prev.getCurrentGUI().open(getCurrentGUI().getOwner());
+         System.out.println("after opening");
      }
 
     /**
@@ -60,7 +68,12 @@ public interface IChainable {
      * handles a close of the chainable gui, this is an override for GUI onClose function
      */
     default void onClosing(){
-        //TODO check if this actually works
+        if(getHandler() == null)
+            return;
+        System.out.println("onClosing: "+getHandler().getCurrentChainable()+" , "+this);
+        if(getHandler().getCurrentChainable() == this)
             ChainHandler.remove(getCurrentGUI().getOwner().getUniqueId());
-     }
+        System.out.println("after closing: "+getHandler());
+
+    }
 }

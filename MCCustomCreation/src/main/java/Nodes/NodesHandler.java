@@ -65,8 +65,8 @@ public class NodesHandler {
             putInMap(events,(IEvent) obj);
     }
 
-    private <T> void putInMap(Map<String,T> map,T obj){
-        map.put(obj.getClass().getSimpleName(),obj);
+    private <T extends INode> void putInMap(Map<String,T> map,T obj){
+        map.put(obj.getKey(),obj);
     }
 
     /**
@@ -99,5 +99,27 @@ public class NodesHandler {
      */
     public Map<String, IPrimitive> getPrimitiveMap() {
         return new HashMap<>(primitiveMap);
+    }
+
+    /**
+     *
+     * @param name a given node name
+     * @return an instance of the node with the given name
+     */
+    public INode getNodeByName(String name) throws CloneNotSupportedException {
+        Map map = null;
+        if(events.containsKey(name))
+            map = events;
+        else if(actionMap.containsKey(name))
+            map = actionMap;
+        else if(parameterMap.containsKey(name))
+            map = parameterMap;
+        else if(primitiveMap.containsKey(name))
+            map = primitiveMap;
+
+        if(map == null)
+            return null;
+
+        return ((INode) map.get(name));
     }
 }

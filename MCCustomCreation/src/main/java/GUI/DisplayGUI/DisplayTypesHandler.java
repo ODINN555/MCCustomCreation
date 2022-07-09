@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -13,6 +14,11 @@ import java.util.Set;
  */
 public class DisplayTypesHandler {
 
+    /**
+     * The registered display types
+     */
+    private static Set<DisplayType> DISPLAYS = new HashSet<>();
+    
     /**
      * Singleton implementation
      */
@@ -41,10 +47,7 @@ public class DisplayTypesHandler {
         };
     }
 
-    /**
-     * The registered display types
-     */
-    private static Set<DisplayType> DISPLAYS;
+
 
     /**
      * Registers display types
@@ -61,7 +64,7 @@ public class DisplayTypesHandler {
      */
     public DisplayType getByType(Class type){
         for (DisplayType display : DISPLAYS) {
-            if(display.getType().equals(type));
+            if(display.getType().equals(type))
                 return display;
         }
 

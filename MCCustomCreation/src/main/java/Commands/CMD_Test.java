@@ -1,8 +1,24 @@
 package Commands;
 
+import GUI.ChooseGUIs.GUI_ChooseGUI;
+import GUI.ChooseGUIs.GUI_CreateEvent;
+import Nodes.*;
+import Nodes.Actions.ATest;
+import Nodes.Events.DefaultEvents;
+import Nodes.Events.IEvent;
+import Nodes.Primitives.TPri_Boolean;
+import Nodes.Primitives.TPri_Integer;
+import Utility.ConfigUtil.NodeYAMLManager;
+import Utility.ConfigUtil.YmlManager;
+import Utility.ItemStackUtil;
+import me.ODINN.MCCustomCreation.Main;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.*;
 
 /**
  * A command for testing purposes only
@@ -24,6 +40,23 @@ public class CMD_Test implements CommandExecutor {
      * @param args the command arguments
      */
     private final void runTest(CommandSender sender,String[] args){
-    
+
+        IEvent event = DefaultEvents.LEFT_CLICK;
+        IAction action = new ATest();
+
+        TruePrimitive iPrim = new TPri_Integer();
+        TruePrimitive bPrim = new TPri_Boolean() ;
+
+        NodesHandler.INSTANCE.register(action,iPrim,bPrim,event);
+        FunctionTree eTree = new FunctionTree(event);
+        FunctionTree aTree = new FunctionTree(action,null,eTree);
+        FunctionTree iTree = new FunctionTree(iPrim,null,aTree);
+        FunctionTree bTree = new FunctionTree(bPrim,null,aTree);
+        aTree.setNext(new FunctionTree[]{iTree,bTree});
+        eTree.setNext(new FunctionTree[]{aTree});
+
+        GUI_CreateEvent gui = new GUI_CreateEvent(new HashMap<>());
+        gui.open((Player) sender);
+
     }
 }

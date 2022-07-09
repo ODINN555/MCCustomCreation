@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,6 +70,7 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
     @Override
     public void onOpening(){
         super.onOpening();
+
         initReturnItemInInventory();
     }
 
@@ -115,7 +117,13 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
         FunctionTree[] next = new FunctionTree[ref.getReceivedTypes().length];
         FunctionTree prev = ref instanceof IReturningNode ? this.currentTree.getPrev() : null; // if it doesn't have anything to return, it doesn't return to anything
 
-        this.currentTree = new FunctionTree(ref,next,prev);
+        if(this.currentTree == null)
+            this.currentTree = new FunctionTree(ref,next,prev);
+        else {
+            this.currentTree.setCurrent(ref);
+            this.currentTree.setNext(next);
+            this.currentTree.setPrev(prev);
+        }
         GUI_DisplayGUI gui = new GUI_DisplayGUI(ref.getReceivedTypes(),ref,this.currentTree);
         this.next(gui,true);
     }

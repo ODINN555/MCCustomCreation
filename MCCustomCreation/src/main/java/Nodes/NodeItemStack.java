@@ -2,10 +2,12 @@ package Nodes;
 
 import Utility.ItemStackUtil;
 import Utility.PDCUtil;
+import com.sun.istack.internal.NotNull;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -73,7 +75,7 @@ public class NodeItemStack implements Serializable {
      * @param item a given ItemStack instance
      * @param classRef a given class reference
      */
-    public NodeItemStack(ItemStack item,INode classRef){
+    public NodeItemStack(@NotNull ItemStack item, INode classRef){
         this(item.getType(),item.getItemMeta().getDisplayName(),item.getItemMeta().getLore(),item.getAmount(),classRef);
     }
 
