@@ -1,17 +1,15 @@
-package Utility.ConfigUtil;
+package Utility.ConfigUtil.NodeSavingManagers.Managers;
 
 import Nodes.Events.IEvent;
 import Nodes.FunctionTree;
-import Nodes.TruePrimitive;
+import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
+import Utility.ConfigUtil.YmlManager;
 import me.ODINN.MCCustomCreation.Main;
-import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class NodeYAMLManager extends YmlManager implements INodeFileManager{
+public class NodeYAMLManager extends YmlManager implements INodeFileManager {
     /**
      * The nodes config file name
      */
@@ -52,6 +50,27 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager{
         return trees;
     }
 
+    @Override
+    public Map<String, Map<IEvent, List<FunctionTree>>> retrieveAllCreations() {
+        Map<String, Map<IEvent, List<FunctionTree>>> map = new HashMap<>();
+        Set<String> creations = getConfig().getConfigurationSection(FATHER_KEY).getKeys(false);
+
+        for (String creation : creations) {
+            List<FunctionTree> tree = retrieveCreation(creation);
+            Map<IEvent,List<FunctionTree>> event = new HashMap<>();
+
+            for (FunctionTree functionTree : tree) {
+                event.put((IEvent) functionTree.getCurrent(),
+                        Arrays.stream(functionTree.getNext())
+                                .collect(Collectors.toList()));
+            }
+
+            map.put(creation,event);
+
+        }
+
+        return map;
+    }
 
 
 }

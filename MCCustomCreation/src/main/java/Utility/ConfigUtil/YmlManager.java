@@ -86,19 +86,16 @@ public class YmlManager {
     }
 
     public boolean set(String[] path, Object obj){
-        String pathStr = "";
-        for (String s : path)
-            pathStr+=s+".";
-
-        pathStr = pathStr.substring(0,pathStr.length()-1);
-
-        return set(pathStr,obj);
+        return set(convertArrayToPath(path),obj);
     }
 
     public Object get(String path){
         return getConfig().get(path);
     }
 
+    public Object get(String[] path){
+        return getConfig().get(convertArrayToPath(path));
+    }
     public <T> T get(String path,Class<T> clazz){
         return getConfig().getObject(path,clazz);
     }

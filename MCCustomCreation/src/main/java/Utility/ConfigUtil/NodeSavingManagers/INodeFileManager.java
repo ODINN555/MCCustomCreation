@@ -1,4 +1,4 @@
-package Utility.ConfigUtil;
+package Utility.ConfigUtil.NodeSavingManagers;
 
 import Nodes.Events.IEvent;
 import Nodes.FunctionTree;
@@ -19,4 +19,6 @@ public interface INodeFileManager {
     boolean saveCreation(@NotNull String creationName, @Nullable List<FunctionTree> nodes);
 
     List<FunctionTree> retrieveCreation(@NotNull String name);
+
+    Map<String,Map<IEvent,List<FunctionTree>>> retrieveAllCreations();
 }

@@ -40,6 +40,10 @@ public enum DefaultEvents implements Serializable,IEvent {
         return this.nodeItemStack == null ? getDefault() : this.nodeItemStack;
     }
 
+    @Override
+    public int compareTo(INode other){
+        return IEvent.super.compareTo(other);
+    }
 
 
 
