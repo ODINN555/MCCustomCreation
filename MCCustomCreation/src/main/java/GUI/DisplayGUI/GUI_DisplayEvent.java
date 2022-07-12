@@ -166,16 +166,21 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
     protected void onClick(InventoryClickEvent event){
         if(event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR))
             return;
+
         event.setCancelled(true); // no item should be grabbed, event should always be cancelled
         ItemStack currentItem = event.getCurrentItem();
-        if(currentItem.equals(returnItemInstance))
+        if(currentItem.equals(returnItemInstance)) {
             onReturnClicked();
-        else if(currentItem.equals(this.addActionItemInstance)){ // add item
+
+        }
+        else if(currentItem.equals(this.addActionItemInstance)){// add item
                 this.onAddActionClicked();
+
         } else if(currentItem.equals(this.removeActionItemInstance)){
                 this.toggleRemoveMode();
-        }else if(NodeItemStack.isNodeItemStack(currentItem))
+        }else if(NodeItemStack.isNodeItemStack(currentItem)) {
             onActionNodeClicked(NodeItemStack.getNodeFromItem(currentItem));
+        }
     }
 
     /**
@@ -190,9 +195,13 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         {
             this.functionList.remove(this.actionsOfTrees.get(getKeyByName(action.getKey())));
             this.actionsOfTrees.remove(getKeyByName(action.getKey()));
-            GUI_DisplayEvent gui = new GUI_DisplayEvent(this.actionsOfTrees.values().stream().collect(Collectors.toList()), this.event);
+            functionList.addAll(this.actionsOfTrees.values());
+            GUI_DisplayEvent gui = new GUI_DisplayEvent(functionList, this.event);
             this.next(gui,true);
         }else {
+            if(action.getReceivedTypes().length == 0)
+                return;
+
             GUI_DisplayGUI gui = new GUI_DisplayGUI(action, this.actionsOfTrees.get(getKeyByName(action.getKey())));
             this.next(gui, false);
         }

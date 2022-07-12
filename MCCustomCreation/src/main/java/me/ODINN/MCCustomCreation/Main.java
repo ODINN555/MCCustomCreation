@@ -1,8 +1,16 @@
 package me.ODINN.MCCustomCreation;
 
+import Commands.CMD_Create;
 import Commands.CMD_Test;
 import Commands.CommandsHandler;
+import Nodes.Actions.ATest;
+import Nodes.Events.DefaultEvents;
+import Nodes.Events.IEvent;
+import Nodes.IAction;
 import Nodes.NodesHandler;
+import Nodes.Primitives.TPri_Boolean;
+import Nodes.Primitives.TPri_Integer;
+import Nodes.TruePrimitive;
 import Utility.ConfigUtil.ConfigHandler;
 import Utility.ConfigUtil.NodeSavingManagers.FileManagersSelection;
 import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
@@ -18,13 +26,19 @@ public class Main extends JavaPlugin {
 
     private static Main INSTANCE;
     private INodeFileManager FileManager;
-    private CreationsManager CreationsManager;
+    private static CreationsManager CreationsManager;
     @Override
     public void onEnable(){
         INSTANCE = this;
         registerDefaults();
         initConfigManagers();
         registerCommands();
+    }
+
+    @Override
+    public void onDisable() {
+        FileManager.saveCreations(CreationsManager.getCreationsMap());
+
     }
 
     private void initConfigManagers(){
@@ -39,12 +53,17 @@ public class Main extends JavaPlugin {
     private void registerDefaults(){
         NodesHandler.INSTANCE.register(
                 //TODO default register
+                DefaultEvents.RIGHT_CLICK,
+                new ATest(),
+                new TPri_Integer(),
+                new TPri_Boolean()
         );
     }
 
     private void registerCommands(){
         CommandsHandler.INSTANCE.register(
-                new CMD_Test()
+                new CMD_Test(),
+                new CMD_Create()
         );
     }
 
@@ -62,5 +81,9 @@ public class Main extends JavaPlugin {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         return CommandsHandler.INSTANCE.onTabComplete(sender, command, alias, args);
+    }
+
+    public static CreationsManager getCreationsManager() {
+        return CreationsManager;
     }
 }

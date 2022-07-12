@@ -43,14 +43,6 @@ public class FunctionTree implements Serializable {
             for (FunctionTree functionTree : func.getNext())
                 executeFunction(functionTree,executor,item);
 
-
-        if(func.getNext() == null || func.getNext().length == 0){
-            if(func.getCurrent() instanceof IPrimitive)
-                return ((IPrimitive) func.getCurrent()).getValue(executor,item);
-
-            return null;
-        }
-
         if(func.getCurrent() instanceof  IAction) {
             IAction action = (IAction) func.getCurrent();
             Object[] values = new Object[action.getReceivedTypes().length];
@@ -59,6 +51,14 @@ public class FunctionTree implements Serializable {
             return  action.action(values);
 
         }
+
+        if(func.getNext() == null || func.getNext().length == 0){
+            if(func.getCurrent() instanceof IPrimitive)
+                return ((IPrimitive) func.getCurrent()).getValue(executor,item);
+
+            return null;
+        }
+
 
         if(func.getCurrent() instanceof IParameter){
             IParameter param = (IParameter) func.getCurrent();
@@ -157,24 +157,30 @@ public class FunctionTree implements Serializable {
     }
 
     private Map<String,Object> serialize(FunctionTree tree){
+        if(tree == null || tree.getCurrent() == null)
+            return null;
         Map<String,Object> map = new HashMap<>();
 
         putDefaultTreeValues(tree,map);
         List<Map<String,Object>> values = new ArrayList<>();
         if(tree.getNext() != null)
-        for (FunctionTree functionTree : tree.getNext())
-            values.add(serialize(functionTree));
+        for (FunctionTree functionTree : tree.getNext()) {
+            Map<String,Object> value = serialize(functionTree);
+            if(value != null && !value.isEmpty())
+                values.add(value );
+        }
 
-        if(!values.isEmpty())
-            map.put("Values",values);
-        else if(tree.getCurrent() instanceof TruePrimitive)
+
+        if(tree.getCurrent() instanceof TruePrimitive)
             map.put("Value",((TruePrimitive) tree.getCurrent()).getValue());
-
+        else map.put("Values",values);
         return map;
 
     }
 
     public static FunctionTree deserialize(FunctionTree prev ,Map<String,Object> map) throws CloneNotSupportedException {
+        if(map == null)
+            return null;
         FunctionTree tree = new FunctionTree(NodesHandler.INSTANCE.getNodeByName((String) map.get("Name")),null,prev);
         List<Map<String,Object>> list = (List) map.get("Values");
         if(tree.getCurrent() instanceof TruePrimitive)
@@ -193,7 +199,8 @@ public class FunctionTree implements Serializable {
     }
 
     private void putDefaultTreeValues(FunctionTree tree, Map<String,Object> map){
-        map.put("Name",((INode) tree.getCurrent()).getKey());
+        if(tree != null && map != null && tree.getCurrent() != null)
+            map.put("Name",((INode) tree.getCurrent()).getKey());
 
     }
 

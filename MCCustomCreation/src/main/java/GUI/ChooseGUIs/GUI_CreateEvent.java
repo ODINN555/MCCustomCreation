@@ -73,6 +73,7 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
             return;
         IEvent event = (IEvent) item.getClassRef();
         GUI_DisplayEvent gui;
+
         if(containsEvent(event.getKey()))
             gui = new GUI_DisplayEvent(getByName(event.getKey()),event);
         else{
@@ -91,7 +92,7 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
             return false;
 
         for (IEvent event : this.events.keySet())
-            if(event.getKey().equalsIgnoreCase(name))
+            if(event != null && event.getKey().equalsIgnoreCase(name))
                 return true;
 
             return false;
@@ -100,7 +101,7 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
     //TODO move to somewhere else
     private List<FunctionTree> getByName(String name){
         for (IEvent iEvent : events.keySet())
-            if(iEvent.getKey().equalsIgnoreCase(name))
+            if(iEvent != null && iEvent.getKey().equalsIgnoreCase(name))
                 return events.get(iEvent);
         return null;
     }

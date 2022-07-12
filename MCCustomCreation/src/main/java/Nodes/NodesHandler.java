@@ -1,6 +1,8 @@
 package Nodes;
 
 import Nodes.Events.IEvent;
+import me.ODINN.MCCustomCreation.Main;
+import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,8 +63,10 @@ public class NodesHandler {
             putInMap(parameterMap,(IParameter) obj);
         else if(obj instanceof IPrimitive)
             putInMap(primitiveMap,(IPrimitive) obj);
-        else if(obj instanceof IEvent)
-            putInMap(events,(IEvent) obj);
+        else if(obj instanceof IEvent) {
+            putInMap(events, (IEvent) obj);
+            Bukkit.getPluginManager().registerEvents((IEvent) obj, Main.getInstance());
+        }
     }
 
     private <T extends INode> void putInMap(Map<String,T> map,T obj){

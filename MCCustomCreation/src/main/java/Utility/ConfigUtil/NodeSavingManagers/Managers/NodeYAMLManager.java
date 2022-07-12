@@ -5,6 +5,7 @@ import Nodes.FunctionTree;
 import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
 import Utility.ConfigUtil.YmlManager;
 import me.ODINN.MCCustomCreation.Main;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
         for (FunctionTree node : nodes)
             list.add(node.serialize());
 
+
         set(new String[]{FATHER_KEY,creationName},list);
 
         return true;
@@ -53,13 +55,17 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
     @Override
     public Map<String, Map<IEvent, List<FunctionTree>>> retrieveAllCreations() {
         Map<String, Map<IEvent, List<FunctionTree>>> map = new HashMap<>();
-        Set<String> creations = getConfig().getConfigurationSection(FATHER_KEY).getKeys(false);
+        ConfigurationSection section = getConfig().getConfigurationSection(FATHER_KEY);
+        if(section == null)
+            return null;
+        Set<String> creations = section.getKeys(false);
 
         for (String creation : creations) {
             List<FunctionTree> tree = retrieveCreation(creation);
             Map<IEvent,List<FunctionTree>> event = new HashMap<>();
 
             for (FunctionTree functionTree : tree) {
+                if(functionTree.getCurrent() != null && functionTree.getNext() != null)
                 event.put((IEvent) functionTree.getCurrent(),
                         Arrays.stream(functionTree.getNext())
                                 .collect(Collectors.toList()));
@@ -71,6 +77,8 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
 
         return map;
     }
+
+
 
 
 }

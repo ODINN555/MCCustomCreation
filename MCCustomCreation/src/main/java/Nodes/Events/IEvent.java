@@ -1,16 +1,28 @@
 package Nodes.Events;
 
+import Nodes.FunctionTree;
 import Nodes.INode;
 import Nodes.NodeItemStack;
+import Utility.PDCUtil;
+import me.ODINN.MCCustomCreation.CreationsManager;
+import me.ODINN.MCCustomCreation.CreationsUtil;
+import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
  * An interface for event nodes
  */
-public interface IEvent extends INode {
+public interface IEvent extends INode, Listener {
+
+
+
     /**
      * The default event node item material
      */
@@ -37,5 +49,20 @@ public interface IEvent extends INode {
             display += s.substring(0,1).toUpperCase() + s.substring(1) +" ";
 
         return new NodeItemStack(DEFAULT_EVENT_MATERIAL,DEFAULT_NAME_COLOR+display,null,1,this);
+    }
+
+    default void executeEvent(ItemStack item, LivingEntity executor){
+        if(CreationsUtil.isCreation(item)){
+            String creationName = CreationsUtil.getCreationFromItem(item);
+            if(Main.getCreationsManager().getCreation(creationName) == null)
+                return;
+            List<FunctionTree> event = Main.getCreationsManager().getEventFromCreation(creationName,this);
+            if(event != null)
+            {
+                for (FunctionTree functionTree : event) // execute all actions!
+                    FunctionTree.executeFunction(functionTree,executor,item);
+            }
+
+        }
     }
 }

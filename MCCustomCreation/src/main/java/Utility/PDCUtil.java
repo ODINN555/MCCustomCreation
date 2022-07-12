@@ -123,4 +123,33 @@ public class PDCUtil {
         container.getPersistentDataContainer().set(new NamespacedKey(Main.getInstance(),key),new StoredData<>(clazz),value);
     }
 
+    /**
+     * removes the given key from the container
+     * @param container a given container
+     * @param key a given key
+     */
+    public static void remove(PersistentDataContainer container ,String key){
+        container.remove(new NamespacedKey(Main.getInstance(),key));
+    }
+
+    /**
+     * removes the given key from the container
+     * @param container a given container
+     * @param key a given key
+     */
+    public static void remove(LivingEntity container ,String key){
+        remove(container.getPersistentDataContainer(),key);
+    }
+
+    /**
+     * removes the given key from the container
+     * @param container a given container
+     * @param key a given key
+     */
+    public static void remove(ItemStack container ,String key){
+        ItemMeta meta = container.getItemMeta();
+        remove(meta.getPersistentDataContainer(),key);
+        container.setItemMeta(meta);
+    }
+
 }

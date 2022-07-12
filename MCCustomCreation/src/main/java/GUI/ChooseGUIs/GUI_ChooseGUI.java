@@ -124,8 +124,11 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
             this.currentTree.setNext(next);
             this.currentTree.setPrev(prev);
         }
-        GUI_DisplayGUI gui = new GUI_DisplayGUI(ref.getReceivedTypes(),ref,this.currentTree);
-        this.next(gui,true);
+
+        if(next.length != 0) {
+            GUI_DisplayGUI gui = new GUI_DisplayGUI(ref.getReceivedTypes(), ref, this.currentTree);
+            this.next(gui, true);
+        }else prev();
     }
 
     public FunctionTree getCurrentTree() {

@@ -7,6 +7,7 @@ import com.sun.istack.internal.Nullable;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public interface INodeFileManager {
 
@@ -21,4 +22,15 @@ public interface INodeFileManager {
     List<FunctionTree> retrieveCreation(@NotNull String name);
 
     Map<String,Map<IEvent,List<FunctionTree>>> retrieveAllCreations();
+
+   default void saveCreations(Map<String,Map<IEvent,List<FunctionTree>>> creations){
+       creations.forEach((name,nodes) -> {
+           List<FunctionTree> events = nodes.keySet().stream()
+                   .map(e -> new FunctionTree(e,nodes.get(e).toArray(new FunctionTree[0]),null))
+                   .collect(Collectors.toList());
+           saveCreation(name,events);
+       });
+   }
+
+
 }
