@@ -17,16 +17,15 @@ import java.util.*;
 /**
  * A command for testing purposes only
  */
-public class CMD_Test implements CommandExecutor {
-    private final String permission = "MCCustomCreation.test";
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(!sender.hasPermission(permission))
-            return false;
+public class CMD_Test extends CustomCommand{
+    private static final String permission = "MCCustomCreation.test";
+    private static final int minArgAmount = 0; // changed depending on current test
+    private static final int maxArgAmount = 0; // changed depending on current test
 
-        runTest(sender,args);
-        return true;
+    public CMD_Test() {
+        super("Test", Arrays.asList("a test command for admins and developers of this plugin"), permission, minArgAmount,maxArgAmount, Arrays.asList("test"));
     }
+
 
     /**
      * runs the test command, for testing of this plugin only
@@ -34,7 +33,6 @@ public class CMD_Test implements CommandExecutor {
      * @param args the command arguments
      */
     private final void runTest(CommandSender sender,String[] args){
-
         IEvent event = DefaultEvents.LEFT_CLICK;
         IAction action = new ATest();
 
@@ -52,5 +50,16 @@ public class CMD_Test implements CommandExecutor {
         GUI_CreateEvent gui = new GUI_CreateEvent(new HashMap<>());
         gui.open((Player) sender);
 
+    }
+
+    @Override
+    boolean onCommand(Player sender, List<String> args) {
+        runTest(sender,args.toArray(new String[0]));
+        return true;
+    }
+
+    @Override
+    List<String> getCompletions(int argumentIndex) {
+        return null;
     }
 }

@@ -41,14 +41,12 @@ public class ChainHandler {
      * @return the next chainable gui
      */
     public static IChainable onNext(@NotNull IChainable curr, IChainable next){
-        System.out.print(" , handler next: " + (curr.getHandler() == null ? "handler null" : "chain: " + curr.getHandler().chain)+"\n");
         UUID ownerId = curr.getCurrentGUI().getOwner().getUniqueId();
         if(getHandler(ownerId) == null)
             setHandler(ownerId,new ChainHandler(curr));
 
         getHandler(ownerId).chain.add(next);
 
-        System.out.println("\n after next: " + getHandler(ownerId).chain);
         return next;
 
 
@@ -60,7 +58,6 @@ public class ChainHandler {
      * @return the new current gui
      */
     public static IChainable onPrev(IChainable current){
-        System.out.print(" , handler: " + (current.getHandler() == null ? "handler null" : current.getHandler().chain)+"\n");
         UUID ownerId = current.getCurrentGUI().getOwner().getUniqueId();
         if(getHandler(ownerId) == null)
             return null;
@@ -70,7 +67,6 @@ public class ChainHandler {
             remove(ownerId);
             return null;
         }
-        System.out.println("\n after prev: " + getHandler(ownerId).chain);
         return getHandler(ownerId).chain.get(getHandler(ownerId).chain.size() -1);
     }
 
@@ -80,7 +76,6 @@ public class ChainHandler {
      * @return the chain handler of the given player
      */
     public static ChainHandler getHandler(UUID id){
-        System.out.println("handlers: "+handlers);
         return handlers.get(id);
     }
 

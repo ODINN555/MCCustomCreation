@@ -232,7 +232,6 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      */
     public void toggleRemoveMode(){
         this.removeMode = !removeMode;
-        System.out.println("remove mode: "+removeMode);
         if(removeMode)
             setRemoveModeView();
         else setNormalView();

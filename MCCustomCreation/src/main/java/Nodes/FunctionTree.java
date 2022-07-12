@@ -180,6 +180,8 @@ public class FunctionTree implements Serializable {
         if(tree.getCurrent() instanceof TruePrimitive)
             ((TruePrimitive) tree.getCurrent()).setValue(map.get("Value"));
         else {
+            if(list == null || list.size() == 0)
+                return tree;
             FunctionTree[] next = new FunctionTree[list.size()];
             for (int i = 0; i < list.size(); i++)
                 next[i] = deserialize(tree,list.get(i));

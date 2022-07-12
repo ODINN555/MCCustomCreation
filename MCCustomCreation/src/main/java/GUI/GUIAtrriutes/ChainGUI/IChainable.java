@@ -15,7 +15,6 @@ public interface IChainable {
      */
       default void next(IChainable gui,boolean removeCurrent){
 
-            System.out.println("before next: "+gui.getCurrentGUI().getClass().getSimpleName()+" , "+getCurrentGUI().getClass().getSimpleName()+" , "+getHandler());
 
            IChainable curr;
            if(removeCurrent)
@@ -23,7 +22,6 @@ public interface IChainable {
                getHandler().removeCurrent();
                curr = getHandler().getCurrentChainable();
            }else curr = this;
-            System.out.println("going to onNext");
             ChainHandler.onNext(curr,gui);
             getCurrentGUI().close();
             gui.getCurrentGUI().open(getCurrentGUI().getOwner());
@@ -44,17 +42,12 @@ public interface IChainable {
      * moving to the previous chainable in the chain. removes the current gui!
      */
     default void prev(){
-        System.out.println("before prev: "+getCurrentGUI().getClass().getSimpleName()+" , "+getHandler()+" , Owner: "+getCurrentGUI().getOwner()+". ");
         IChainable prev = ChainHandler.onPrev(this);
-        System.out.println("after getPrev");
          getCurrentGUI().close();
-        System.out.println("after close");
          if(prev == null)
              return;
 
-         prev.getCurrentGUI().open(getCurrentGUI().getOwner());
-         System.out.println("after opening");
-     }
+         prev.getCurrentGUI().open(getCurrentGUI().getOwner());     }
 
     /**
      *
@@ -70,10 +63,7 @@ public interface IChainable {
     default void onClosing(){
         if(getHandler() == null)
             return;
-        System.out.println("onClosing: "+getHandler().getCurrentChainable()+" , "+this);
         if(getHandler().getCurrentChainable() == this)
             ChainHandler.remove(getCurrentGUI().getOwner().getUniqueId());
-        System.out.println("after closing: "+getHandler());
-
     }
 }

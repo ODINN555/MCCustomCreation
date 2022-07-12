@@ -1,14 +1,18 @@
 package me.ODINN.MCCustomCreation;
 
 import Commands.CMD_Test;
+import Commands.CommandsHandler;
 import Nodes.NodesHandler;
 import Utility.ConfigUtil.ConfigHandler;
 import Utility.ConfigUtil.NodeSavingManagers.FileManagersSelection;
 import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.List;
 
 public class Main extends JavaPlugin {
 
@@ -20,12 +24,7 @@ public class Main extends JavaPlugin {
         INSTANCE = this;
         registerDefaults();
         initConfigManagers();
-
-
-
-        //TODO cmd handler
-        Bukkit.getPluginCommand("test").setExecutor(new CMD_Test());
-
+        registerCommands();
     }
 
     private void initConfigManagers(){
@@ -43,21 +42,25 @@ public class Main extends JavaPlugin {
         );
     }
 
+    private void registerCommands(){
+        CommandsHandler.INSTANCE.register(
+                new CMD_Test()
+        );
+    }
 
 
-
-
-
-
-
-
-
-
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        return CommandsHandler.INSTANCE.onCommand(sender,command,label,args);
+    }
 
     public static Main getInstance(){
         return INSTANCE;
     }
 
 
-
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return CommandsHandler.INSTANCE.onTabComplete(sender, command, alias, args);
+    }
 }
