@@ -3,6 +3,8 @@ package Nodes.Events;
 import Nodes.FunctionTree;
 import Nodes.INode;
 import Nodes.NodeItemStack;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import Utility.PDCUtil;
 import me.ODINN.MCCustomCreation.CreationsManager;
 import me.ODINN.MCCustomCreation.CreationsUtil;
@@ -54,13 +56,16 @@ public interface IEvent extends INode, Listener {
     default void executeEvent(ItemStack item, LivingEntity executor){
         if(CreationsUtil.isCreation(item)){
             String creationName = CreationsUtil.getCreationFromItem(item);
-            if(Main.getCreationsManager().getCreation(creationName) == null)
+            if(!Main.getCreationsManager().isValid(creationName)) {
+                Logging.log("Tried to execute a creation which is not valid. creation: "+creationName+"\nFunctions: "+Main.getCreationsManager().getCreation(creationName), LoggingOptions.ERROR);
                 return;
+            }
             List<FunctionTree> event = Main.getCreationsManager().getEventFromCreation(creationName,this);
             if(event != null)
             {
+
                 for (FunctionTree functionTree : event) // execute all actions!
-                    FunctionTree.executeFunction(functionTree,executor,item);
+                        FunctionTree.executeFunction(functionTree,executor,item);
             }
 
         }

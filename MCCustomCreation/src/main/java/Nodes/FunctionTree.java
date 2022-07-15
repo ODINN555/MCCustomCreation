@@ -1,14 +1,14 @@
 package Nodes;
 
 import Nodes.Events.IEvent;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * An object representing a node as a part of a tree which represents a Function
@@ -39,6 +39,8 @@ public class FunctionTree implements Serializable {
      * The recursion itself returns the value of the next parameter/primitive in the tree
      */
     public static Object executeFunction(FunctionTree func, LivingEntity executor, ItemStack item){
+        if(func == null)
+            return null;
         if(func.getCurrent() instanceof IEvent)
             for (FunctionTree functionTree : func.getNext())
                 executeFunction(functionTree,executor,item);
@@ -152,10 +154,19 @@ public class FunctionTree implements Serializable {
         return prev;
     }
 
+    /**
+     *
+     * @return this tree serialized
+     */
     public Map<String,Object> serialize(){
         return this.serialize(this);
     }
 
+    /**
+     *
+     * @param tree a given tree
+     * @return the tree serialized as a map
+     */
     private Map<String,Object> serialize(FunctionTree tree){
         if(tree == null || tree.getCurrent() == null)
             return null;
@@ -164,28 +175,32 @@ public class FunctionTree implements Serializable {
         putDefaultTreeValues(tree,map);
         List<Map<String,Object>> values = new ArrayList<>();
         if(tree.getNext() != null)
-        for (FunctionTree functionTree : tree.getNext()) {
-            Map<String,Object> value = serialize(functionTree);
-            if(value != null && !value.isEmpty())
-                values.add(value );
-        }
-
+        for (FunctionTree functionTree : tree.getNext())
+                values.add(serialize(functionTree));
 
         if(tree.getCurrent() instanceof TruePrimitive)
             map.put("Value",((TruePrimitive) tree.getCurrent()).getValue());
-        else map.put("Values",values);
+        else map.put("Values",values.isEmpty() ? null : values);
         return map;
 
     }
 
+    /**
+     *
+     * @param prev the previous function tree
+     * @param map the map to deserialize
+     * @return the map deserialized
+     * @throws CloneNotSupportedException
+     */
     public static FunctionTree deserialize(FunctionTree prev ,Map<String,Object> map) throws CloneNotSupportedException {
         if(map == null)
             return null;
         FunctionTree tree = new FunctionTree(NodesHandler.INSTANCE.getNodeByName((String) map.get("Name")),null,prev);
-        List<Map<String,Object>> list = (List) map.get("Values");
+
         if(tree.getCurrent() instanceof TruePrimitive)
             ((TruePrimitive) tree.getCurrent()).setValue(map.get("Value"));
         else {
+            List<Map<String,Object>> list = (List) map.get("Values");
             if(list == null || list.size() == 0)
                 return tree;
             FunctionTree[] next = new FunctionTree[list.size()];
@@ -198,15 +213,27 @@ public class FunctionTree implements Serializable {
 
     }
 
+    /**
+     * puts the default values of the given tree for serialization inside the given map
+     * @param tree a given tree
+     * @param map a given map
+     */
     private void putDefaultTreeValues(FunctionTree tree, Map<String,Object> map){
         if(tree != null && map != null && tree.getCurrent() != null)
             map.put("Name",((INode) tree.getCurrent()).getKey());
 
     }
 
+    @Override
     public String toString(){
         return FunctionTree.toString(this);
     }
+
+    /**
+     *
+     * @param tree a given tree
+     * @return a string which describes the give tree
+     */
     private static String toString(FunctionTree tree){
         String str = "";
         String key;
@@ -222,5 +249,58 @@ public class FunctionTree implements Serializable {
         }
 
         return str;
+    }
+
+    /**
+     *
+     * @return if this tree is valid (if its complete)
+     */
+    public boolean isValid(){
+        return isValid(this);
+    }
+
+    /**
+     *
+     * @param tree a given tree
+     * @return if the given tree is valid
+     */
+    private static boolean isValid(FunctionTree tree){
+        //validation need to be two sided since the function cant tell which is the first tree
+        Object curr = tree.getCurrent();
+
+        if(curr == null)
+            return false;
+        if(!(curr instanceof INode))
+            return false;
+        if(curr instanceof IEvent){
+            if(tree.getPrev() != null) // previous should always be null for events
+                return false;
+            if(tree.getNext() != null && tree.getNext().length != 0)
+                if(Arrays.stream(tree.getNext()).anyMatch(x -> x== null)) {
+                    return false;
+                }
+                else for (FunctionTree functionTree : tree.getNext())
+                        if(!isValid(functionTree))
+                            return false;
+
+            return true;
+        }
+
+        if(curr instanceof IReceiveAbleNode) {
+            if(tree.getNext() == null || tree.getNext().length == 0 || Arrays.stream(tree.getNext()).anyMatch(x -> x == null))
+                return false;
+        }
+
+        if(curr instanceof  IReturningNode){
+            if(tree.getPrev() == null || !(tree.getPrev().getCurrent() instanceof IReceiveAbleNode))
+                return false;
+        }
+
+        if(tree.getNext() != null)
+        for (FunctionTree functionTree : tree.getNext())
+            if(!isValid(functionTree))
+                return false;
+
+        return true;
     }
 }

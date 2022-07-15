@@ -19,10 +19,23 @@ public interface INodeFileManager {
      */
     boolean saveCreation(@NotNull String creationName, @Nullable List<FunctionTree> nodes);
 
+    /**
+     *
+     * @param name a given name
+     * @return retrieve the creation with the given name
+     */
     List<FunctionTree> retrieveCreation(@NotNull String name);
 
+    /**
+     * retrieves all the creations
+     * @return all creations
+     */
     Map<String,Map<IEvent,List<FunctionTree>>> retrieveAllCreations();
 
+    /**
+     * saves the given creations
+     * @param creations given creations
+     */
    default void saveCreations(Map<String,Map<IEvent,List<FunctionTree>>> creations){
        creations.forEach((name,nodes) -> {
            List<FunctionTree> events = nodes.keySet().stream()

@@ -1,5 +1,6 @@
 package GUI.DisplayGUI;
 
+import Nodes.FunctionTree;
 import Utility.ItemStackUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,10 +11,10 @@ import org.bukkit.inventory.ItemStack;
  */
 public enum DefaultDisplayTypes implements DisplayType{
 
-    INTEGER(Integer.class, ItemStackUtil.newItemStack(Material.BLUE_STAINED_GLASS_PANE, ChatColor.BLUE+"Integer")),
-    FLOAT(Float.class, ItemStackUtil.newItemStack(Material.YELLOW_STAINED_GLASS_PANE,ChatColor.YELLOW+"Float")),
-    STRING(String.class, ItemStackUtil.newItemStack(Material.PINK_STAINED_GLASS_PANE, ChatColor.LIGHT_PURPLE+"String")),
-    BOOLEAN(Boolean.class, ItemStackUtil.newItemStack(Material.RED_STAINED_GLASS_PANE,ChatColor.RED+"Boolean"))
+    INTEGER(Integer.class, Material.BLUE_STAINED_GLASS_PANE,ChatColor.BLUE),
+    FLOAT(Float.class, Material.YELLOW_STAINED_GLASS_PANE,ChatColor.YELLOW),
+    STRING(String.class, Material.PINK_STAINED_GLASS_PANE, ChatColor.LIGHT_PURPLE),
+    BOOLEAN(Boolean.class, Material.RED_STAINED_GLASS_PANE,ChatColor.RED)
     ;
 
 
@@ -21,25 +22,32 @@ public enum DefaultDisplayTypes implements DisplayType{
      * The display type
      */
     private Class type;
+    private Material mat;
+    private ChatColor nameColor;
     /**
      * The ItemStack being displayed
      */
     private ItemStack displayItem;
 
 
-    DefaultDisplayTypes(Class type,ItemStack displayItem){
+    DefaultDisplayTypes(Class type,Material mat,ChatColor nameColor){
         this.type = type;
-        this.displayItem = displayItem;
+        this.mat = mat;
+        this.nameColor = nameColor;
     }
 
 
+
     @Override
-    public ItemStack getDisplayItem() {
-        return this.displayItem;
+    public ItemStack getDisplayItem(FunctionTree tree) {
+        return DisplayTypesHandler.INSTANCE.createDefaultDisplayType(mat, type.getSimpleName(), nameColor,tree);
     }
 
     @Override
     public Class getType() {
         return this.type;
     }
+
+
+
 }

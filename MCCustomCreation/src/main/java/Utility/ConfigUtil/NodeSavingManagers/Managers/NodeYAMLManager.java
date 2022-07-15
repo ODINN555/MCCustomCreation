@@ -16,7 +16,11 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
      */
     private static String NAME = "Creations";
 
+    /**
+     * the nodes configuration section key (father as if highest)
+     */
     private static String FATHER_KEY = "CREATIONS";
+
     /**
      * Singleton implementation
      */
@@ -31,9 +35,7 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
         for (FunctionTree node : nodes)
             list.add(node.serialize());
 
-
         set(new String[]{FATHER_KEY,creationName},list);
-
         return true;
     }
 
@@ -56,11 +58,14 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
     public Map<String, Map<IEvent, List<FunctionTree>>> retrieveAllCreations() {
         Map<String, Map<IEvent, List<FunctionTree>>> map = new HashMap<>();
         ConfigurationSection section = getConfig().getConfigurationSection(FATHER_KEY);
+
         if(section == null)
             return null;
+
         Set<String> creations = section.getKeys(false);
 
         for (String creation : creations) {
+
             List<FunctionTree> tree = retrieveCreation(creation);
             Map<IEvent,List<FunctionTree>> event = new HashMap<>();
 
@@ -72,13 +77,7 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
             }
 
             map.put(creation,event);
-
         }
-
         return map;
     }
-
-
-
-
 }

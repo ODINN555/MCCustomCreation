@@ -1,15 +1,7 @@
 package Commands;
 
-import GUI.ChooseGUIs.GUI_CreateEvent;
-import Nodes.*;
-import Nodes.Actions.ATest;
-import Nodes.Events.DefaultEvents;
-import Nodes.Events.IEvent;
-import Nodes.Primitives.TPri_Boolean;
-import Nodes.Primitives.TPri_Integer;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import Utility.ConfigUtil.YmlManager;
+import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -24,7 +16,7 @@ public class CMD_Test extends CustomCommand{
     private static final int maxArgAmount = 0; // changed depending on current test
 
     public CMD_Test() {
-        super("Test", Arrays.asList("a test command for admins and developers of this plugin"), permission, minArgAmount,maxArgAmount, Arrays.asList("test"));
+        super("Test", Arrays.asList("a test command for admins and developers of this plugin"), permission, minArgAmount,maxArgAmount, Arrays.asList("test"),Arrays.asList("Test"));
     }
 
 
@@ -35,7 +27,6 @@ public class CMD_Test extends CustomCommand{
      */
     private final void runTest(CommandSender sender,String[] args){
 
-
     }
 
     @Override
@@ -45,7 +36,7 @@ public class CMD_Test extends CustomCommand{
     }
 
     @Override
-    List<String> getCompletions(int argumentIndex) {
+    List<String> getCompletions(int argumentIndex,Player player) {
         return null;
     }
 }

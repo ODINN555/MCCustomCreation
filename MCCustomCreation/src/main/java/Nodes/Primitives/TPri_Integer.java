@@ -1,6 +1,7 @@
 package Nodes.Primitives;
 
 import GUI.ChooseGUIs.GUI_ChooseGUI;
+import Nodes.FunctionTree;
 import Nodes.TruePrimitive;
 import Utility.ItemStackUtil;
 import org.bukkit.Material;
@@ -26,7 +27,8 @@ public class TPri_Integer extends TruePrimitive<Integer> {
 
     @Override
     public void onChosen(GUI_ChooseGUI gui) {
-        gui.close();
+        setValue(5);
+        gui.prev();
     }
 
     @Override

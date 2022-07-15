@@ -6,6 +6,8 @@ import GUI.GUIAtrriutes.ListGUI.ListableGUI;
 import Nodes.Events.IEvent;
 import Nodes.*;
 import Utility.ItemStackUtil;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import com.sun.istack.internal.NotNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -15,6 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import sun.rmi.runtime.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,6 +86,11 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         this.event = event;
     }
 
+    /**
+     *
+     * @param actions a given action list
+     * @return the actions as ItemStack instances
+     */
     private static List<ItemStack> getActionsAsItemStacks(List<FunctionTree> actions){
         return actions.stream()
                 .filter(obj -> (obj.getCurrent() instanceof IAction))
@@ -106,9 +114,13 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
     public void onOpening(){
 
         if(actionsOfTrees.containsKey(null)){
-            actionsOfTrees.put((IAction) actionsOfTrees.get(null).getCurrent(),actionsOfTrees.get(null));
-            actionsOfTrees.remove(null);
-            this.itemsList = getActionsAsItemStacks(actionsOfTrees.values().stream().collect(Collectors.toList()));
+            if(actionsOfTrees.get(null).getCurrent() == null)
+                functionList.remove(actionsOfTrees.remove(null));
+            else {
+                actionsOfTrees.put((IAction) actionsOfTrees.get(null).getCurrent(), actionsOfTrees.get(null));
+                actionsOfTrees.remove(null);
+                this.itemsList = getActionsAsItemStacks(actionsOfTrees.values().stream().collect(Collectors.toList()));
+            }
         }
         super.onOpening();
         if(removeMode)
@@ -116,7 +128,25 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         initAddActionItemInInventory();
         initRemoveActionItemInInventory();
         initReturnItemInInventory();
+        initDisplayActionItems();
         updateInventory();
+    }
+
+    public void initDisplayActionItems(){
+
+        for (int i =0; i< getInventory().getSize(); i++) {
+            ItemStack itemStack = getInventory().getItem(i);
+            if(NodeItemStack.isNodeItemStack(itemStack))
+            {
+
+                ItemMeta meta = itemStack.getItemMeta();
+                IAction action = (IAction) NodeItemStack.getNodeFromItem(itemStack).getClassRef();
+                FunctionTree tree = actionsOfTrees.get(getKeyByName(action.getKey()));
+                meta.setLore(DisplayTypesHandler.INSTANCE.getFunctionTreeDisplayOnNode(tree));
+                itemStack.setItemMeta(meta);
+                getInventory().setItem(i,itemStack);
+            }
+        }
     }
 
     @Override
@@ -189,8 +219,10 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      */
     public void onActionNodeClicked(@NotNull NodeItemStack node){
         IAction action = (IAction) node.getClassRef();
-        if(getKeyByName(action.getKey()) == null) //TODO put error here
+        if(getKeyByName(action.getKey()) == null) {
+            Logging.log("There is no action with the specified key. Key: "+action.getKey(), LoggingOptions.ERROR);
             return;
+        }
         if(removeMode)
         {
             this.functionList.remove(this.actionsOfTrees.get(getKeyByName(action.getKey())));
@@ -201,7 +233,6 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         }else {
             if(action.getReceivedTypes().length == 0)
                 return;
-
             GUI_DisplayGUI gui = new GUI_DisplayGUI(action, this.actionsOfTrees.get(getKeyByName(action.getKey())));
             this.next(gui, false);
         }
@@ -275,6 +306,7 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         getInventory().setItem(removeActionSlot,removeActionItemInstance);
         updateInventory();
     }
+
 
 
 }

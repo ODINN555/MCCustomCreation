@@ -27,7 +27,7 @@ public class CMD_Create extends CustomCommand {
 
 
     public CMD_Create() {
-        super(NAME, Arrays.asList("Creates or modifies a creation, currently works on items only."), PERMISSION, 1, 1, Arrays.asList(NAME));
+        super(NAME, Arrays.asList("Creates or modifies a creation, currently works on items only."), PERMISSION, 1, 1, Arrays.asList(NAME),Arrays.asList("Create [Name]"));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class CMD_Create extends CustomCommand {
     }
 
     @Override
-    List<String> getCompletions(int argumentIndex) {
+    List<String> getCompletions(int argumentIndex,Player player) {
         if(argumentIndex == 0)
             return Main.getCreationsManager().getCreationList();
         return null;

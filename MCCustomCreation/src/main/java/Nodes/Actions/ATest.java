@@ -8,13 +8,13 @@ import org.bukkit.Material;
 public class ATest implements IAction {
     @Override
     public boolean action(Object... params) {
-        Bukkit.broadcastMessage("Test action works!");
+        Bukkit.broadcastMessage("I display the msg: "+params[0]);
         return true;
     }
 
     @Override
     public Class[] getReceivedTypes() {
-        return new Class[]{};
+        return new Class[]{Boolean.class};
     }
 
     @Override

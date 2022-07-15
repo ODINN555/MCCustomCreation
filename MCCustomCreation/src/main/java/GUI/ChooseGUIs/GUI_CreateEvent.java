@@ -81,12 +81,16 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
             events.put(event,list);
             gui = new GUI_DisplayEvent(list,event);
         }
-        //TODO register current build to chosen event
 
 
         this.next(gui,false);
     }
-    //TODO move to somewhere else
+
+    /**
+     *
+     * @param name a given name
+     * @return if the events contain an event with the given name
+     */
     private boolean containsEvent(String name){
         if(name == null)
             return false;
@@ -98,7 +102,11 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
             return false;
     }
 
-    //TODO move to somewhere else
+    /**
+     *
+     * @param name a given name
+     * @return the event value of the event with the given name
+     */
     private List<FunctionTree> getByName(String name){
         for (IEvent iEvent : events.keySet())
             if(iEvent != null && iEvent.getKey().equalsIgnoreCase(name))

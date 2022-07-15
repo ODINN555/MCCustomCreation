@@ -11,12 +11,36 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.logging.Level;
 
+/**
+ * a YAML file manager
+ */
 public class YmlManager {
+
+    /**
+     * the plugin
+     */
     private JavaPlugin plugin;
+
+    /**
+     * the config
+     */
     private FileConfiguration dataConfig = null;
+
+    /**
+     * the file
+     */
     private File configFile = null;
+
+    /**
+     * the file's name
+     */
     private String name;
-    
+
+    /**
+     *
+     * @param plugin the plugin
+     * @param name the file's name
+     */
     public YmlManager(JavaPlugin plugin, String name) {
         this.plugin = plugin;
         if(name.contains(".yml"))
@@ -25,6 +49,9 @@ public class YmlManager {
         saveDefaultConfig();
     }
 
+    /**
+     * reloads the config
+     */
     public void reloadConfig() {
 
         if(this.configFile == null)
@@ -40,6 +67,10 @@ public class YmlManager {
         }
     }
 
+    /**
+     *
+     * @return the config
+     */
     public FileConfiguration getConfig() {
         if(this.dataConfig == null)
             reloadConfig();
@@ -47,6 +78,9 @@ public class YmlManager {
 
     }
 
+    /**
+     * saves the config
+     */
     public void saveConfig() {
         if(this.dataConfig == null || this.configFile == null)
             return;
@@ -58,6 +92,9 @@ public class YmlManager {
         }
     }
 
+    /**
+     * saves the default config
+     */
     public void saveDefaultConfig() {
         if(this.configFile == null)
             this.configFile = new File(this.plugin.getDataFolder(), getName()+".yml");
@@ -71,6 +108,12 @@ public class YmlManager {
         return name;
     }
 
+    /**
+     * sets the given object in the given path in the config
+     * @param path a given path
+     * @param obj a given object
+     * @return if the set was successful
+     */
     public boolean set(String path, Object obj){
         if(getConfig() == null)
             return false;
@@ -85,21 +128,50 @@ public class YmlManager {
         return true;
     }
 
+    /**
+     * sets the given object in the given path in the config
+     * @param path a given path
+     * @param obj a given object
+     * @return if the set was successful
+     */
     public boolean set(String[] path, Object obj){
         return set(convertArrayToPath(path),obj);
     }
 
+    /**
+     *
+     * @param path a given path
+     * @return the retrieved object of the path
+     */
     public Object get(String path){
         return getConfig().get(path);
     }
 
+    /**
+     *
+     * @param path a given path
+     * @return the retrieved object of the path
+     */
     public Object get(String[] path){
         return getConfig().get(convertArrayToPath(path));
     }
+
+    /**
+     *
+     * @param path a given path
+     * @param clazz the class which presents the return type
+     * @param <T> the return type
+     * @return the retrieved object of the path
+     */
     public <T> T get(String path,Class<T> clazz){
         return getConfig().getObject(path,clazz);
     }
 
+    /**
+     *
+     * @param path a given array
+     * @return the given path as a YAML string path
+     */
     protected String convertArrayToPath(String[] path){
 
         String pathStr = "";
