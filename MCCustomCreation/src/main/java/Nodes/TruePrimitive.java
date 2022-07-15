@@ -13,30 +13,34 @@ import org.bukkit.inventory.ItemStack;
 public abstract class TruePrimitive<T> implements IPrimitive{
 
     private T value;
-    private ItemStack itemRef;
-    public TruePrimitive(T value,ItemStack itemRef){
+    public TruePrimitive(T value){
         this.value = value;
-        this.itemRef = itemRef;
     }
 
-    public TruePrimitive(ItemStack itemRef){
-        this(null,itemRef);
+    public TruePrimitive(){
+        this.value = null;
     }
+
+    public abstract ItemStack getDefaultDisplayItem();
 
     @Override
     public NodeItemStack getItemReference() {
-        return new NodeItemStack(itemRef,this);
+        return new NodeItemStack(getDefaultDisplayItem(),this);
     }
 
     @Override
     public T getValue(LivingEntity executor, ItemStack item) {
+        return this.getValue();
+    }
+
+    public T getValue(){
         return this.value;
     }
 
-    @Override
-    public Class getReturnType() {
-        return this.value.getClass();
+    public void setValue(T value){
+        this.value = value;
     }
 
     public abstract void onChosen(GUI_ChooseGUI gui);
+
 }

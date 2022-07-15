@@ -12,10 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -53,9 +50,11 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
 
     @Override
     protected void onClick(InventoryClickEvent event){
+
         if(event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR))
             return;
         event.setCancelled(true); // no item should be grabbed, then event should always be cancelled
+
 
         ItemStack currentItem = event.getCurrentItem();
 
@@ -67,36 +66,50 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
     /**
      * on event node being clicked in the GUI
      * @param item The clicked item node
+     *
      */
     private void onEventNodeClicked(NodeItemStack item){
         if(item == null)
             return;
         IEvent event = (IEvent) item.getClassRef();
         GUI_DisplayEvent gui;
+
         if(containsEvent(event.getKey()))
             gui = new GUI_DisplayEvent(getByName(event.getKey()),event);
-        else gui = new GUI_DisplayEvent(event);
-        //TODO register current build to chosen event
+        else{
+            List<FunctionTree> list = new ArrayList<>();
+            events.put(event,list);
+            gui = new GUI_DisplayEvent(list,event);
+        }
 
 
         this.next(gui,false);
     }
-    //TODO move to somewhere else
+
+    /**
+     *
+     * @param name a given name
+     * @return if the events contain an event with the given name
+     */
     private boolean containsEvent(String name){
         if(name == null)
             return false;
 
         for (IEvent event : this.events.keySet())
-            if(event.getKey().equalsIgnoreCase(name))
+            if(event != null && event.getKey().equalsIgnoreCase(name))
                 return true;
 
             return false;
     }
 
-    //TODO move to somewhere else
+    /**
+     *
+     * @param name a given name
+     * @return the event value of the event with the given name
+     */
     private List<FunctionTree> getByName(String name){
         for (IEvent iEvent : events.keySet())
-            if(iEvent.getKey().equalsIgnoreCase(name))
+            if(iEvent != null && iEvent.getKey().equalsIgnoreCase(name))
                 return events.get(iEvent);
         return null;
     }

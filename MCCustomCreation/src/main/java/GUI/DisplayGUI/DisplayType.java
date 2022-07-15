@@ -1,5 +1,6 @@
 package GUI.DisplayGUI;
 
+import Nodes.FunctionTree;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -11,7 +12,7 @@ public interface DisplayType {
      *
      * @return The displayed item
      */
-    ItemStack getDisplayItem();
+    ItemStack getDisplayItem(FunctionTree tree);
 
     Class getType();
 }

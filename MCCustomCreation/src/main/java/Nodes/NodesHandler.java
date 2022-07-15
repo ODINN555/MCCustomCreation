@@ -1,6 +1,8 @@
 package Nodes;
 
 import Nodes.Events.IEvent;
+import me.ODINN.MCCustomCreation.Main;
+import org.bukkit.Bukkit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,12 +63,14 @@ public class NodesHandler {
             putInMap(parameterMap,(IParameter) obj);
         else if(obj instanceof IPrimitive)
             putInMap(primitiveMap,(IPrimitive) obj);
-        else if(obj instanceof IEvent)
-            putInMap(events,(IEvent) obj);
+        else if(obj instanceof IEvent) {
+            putInMap(events, (IEvent) obj);
+            Bukkit.getPluginManager().registerEvents((IEvent) obj, Main.getInstance());
+        }
     }
 
-    private <T> void putInMap(Map<String,T> map,T obj){
-        map.put(obj.getClass().getSimpleName(),obj);
+    private <T extends INode> void putInMap(Map<String,T> map,T obj){
+        map.put(obj.getKey(),obj);
     }
 
     /**
@@ -99,5 +103,27 @@ public class NodesHandler {
      */
     public Map<String, IPrimitive> getPrimitiveMap() {
         return new HashMap<>(primitiveMap);
+    }
+
+    /**
+     *
+     * @param name a given node name
+     * @return an instance of the node with the given name
+     */
+    public INode getNodeByName(String name) throws CloneNotSupportedException {
+        Map map = null;
+        if(events.containsKey(name))
+            map = events;
+        else if(actionMap.containsKey(name))
+            map = actionMap;
+        else if(parameterMap.containsKey(name))
+            map = parameterMap;
+        else if(primitiveMap.containsKey(name))
+            map = primitiveMap;
+
+        if(map == null)
+            return null;
+
+        return ((INode) map.get(name));
     }
 }

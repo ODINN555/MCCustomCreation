@@ -4,10 +4,13 @@ import GUI.DisplayGUI.GUI_DisplayGUI;
 import GUI.GUIAtrriutes.ChainGUI.IReturnable;
 import GUI.GUIAtrriutes.ListGUI.ListableGUI;
 import Nodes.*;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -37,11 +40,11 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
         this(Stream.concat( // make 1 big list out of all primitives and parameters which their return type matches the given one
                 NodesHandler.INSTANCE.getPrimitiveMap().values()
                         .stream()
-                        .filter(p -> p.getReturnType().equals(returnType))
+                        .filter(p -> p.getReturnType().isAssignableFrom(returnType))
 
                 ,NodesHandler.INSTANCE.getParameterMap().values()
                         .stream()
-                        .filter(p -> p.getReturnType().equals(returnType)))
+                        .filter(p -> p.getReturnType().isAssignableFrom(returnType)))
                             .collect(Collectors.toList())
                 ,currentTree,"Choose A "+returnType.getSimpleName());
 
@@ -69,6 +72,7 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
     @Override
     public void onOpening(){
         super.onOpening();
+
         initReturnItemInInventory();
     }
 
@@ -101,23 +105,29 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
     public void onNodeClicked(NodeItemStack item){
 
         if(item.getClassRef() instanceof IPrimitive) { // IPrimitive is unique since it closes the chain
+            this.currentTree.setCurrent(item.getClassRef());
             if (item.getClassRef() instanceof TruePrimitive) {
                 ((TruePrimitive) item.getClassRef()).onChosen(this);
             }else {
-                this.currentTree = new FunctionTree(item.getClassRef(), null, this.currentTree.getPrev());
                 this.prev();
             }
             return;
         }
-        if(!(item.getClassRef() instanceof IReceiveAbleNode)) // node must be receivable
-            return;
-        IReceiveAbleNode ref = (IReceiveAbleNode) item.getClassRef();
-        FunctionTree[] next = new FunctionTree[ref.getReceivedTypes().length];
-        FunctionTree prev = ref instanceof IReturningNode ? this.currentTree.getPrev() : null; // if it doesn't have anything to return, it doesn't return to anything
+        if(item.getClassRef() instanceof IReceiveAbleNode) { // node must be receivable
 
-        this.currentTree = new FunctionTree(ref,next,prev);
-        GUI_DisplayGUI gui = new GUI_DisplayGUI(ref.getReceivedTypes(),ref,this.currentTree);
-        this.next(gui,true);
+            IReceiveAbleNode ref = (IReceiveAbleNode) item.getClassRef();
+            FunctionTree[] next = new FunctionTree[ref.getReceivedTypes().length];
+
+            // current tree should not be null, if it is, its a structural error
+                this.currentTree.setCurrent(ref);
+                if(next.length != 0)
+                    this.currentTree.setNext(next);
+
+            if (next.length != 0) {
+                GUI_DisplayGUI gui = new GUI_DisplayGUI(ref.getReceivedTypes(), ref, this.currentTree);
+                this.next(gui, true);
+            } else prev();
+        }
     }
 
     public FunctionTree getCurrentTree() {

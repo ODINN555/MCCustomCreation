@@ -92,9 +92,6 @@ public abstract class PageableGUI extends AGUI {
             getInventory().setItem(previousPageSlot,prevPageItemStack);
         else getInventory().setItem(previousPageSlot,null);
 
-        System.out.println("page: "+page);
-        System.out.println("max page: "+maxPageCount);
-
         if(page < maxPageCount )
             getInventory().setItem(nextPageSlot,nextPageItemStack);
         else getInventory().setItem(nextPageSlot,null);
@@ -192,6 +189,7 @@ public abstract class PageableGUI extends AGUI {
 
     @Override
     protected void onOpening(){
+        super.onOpening();
         initPageItemStacks();
         updateInventory();
     }

@@ -14,16 +14,18 @@ public interface IChainable {
      * @param removeCurrent if to remove the current gui
      */
       default void next(IChainable gui,boolean removeCurrent){
-           getCurrentGUI().close();
 
-           gui.getCurrentGUI().open(getCurrentGUI().getOwner());
+
            IChainable curr;
            if(removeCurrent)
            {
                getHandler().removeCurrent();
                curr = getHandler().getCurrentChainable();
            }else curr = this;
-            getHandler().onNext(curr,gui);
+            ChainHandler.onNext(curr,gui);
+            getCurrentGUI().close();
+            gui.getCurrentGUI().open(getCurrentGUI().getOwner());
+
       }
 
     /**
@@ -40,13 +42,12 @@ public interface IChainable {
      * moving to the previous chainable in the chain. removes the current gui!
      */
     default void prev(){
-         IChainable prev = getHandler().onPrev(this);
+        IChainable prev = ChainHandler.onPrev(this);
          getCurrentGUI().close();
          if(prev == null)
              return;
 
-         prev.getCurrentGUI().open(getCurrentGUI().getOwner());
-     }
+         prev.getCurrentGUI().open(getCurrentGUI().getOwner());     }
 
     /**
      *
@@ -60,7 +61,9 @@ public interface IChainable {
      * handles a close of the chainable gui, this is an override for GUI onClose function
      */
     default void onClosing(){
-        //TODO check if this actually works
+        if(getHandler() == null)
+            return;
+        if(getHandler().getCurrentChainable() == this)
             ChainHandler.remove(getCurrentGUI().getOwner().getUniqueId());
-     }
+    }
 }

@@ -10,6 +10,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,9 +39,9 @@ public interface IGUIList {
         int lastRow = rows > 6? amountInRow : items.size() % amountInRow;
 
         for(int i = 1; i <= size / 9;i++) {
-            int[] slots = LayoutOption.CENTERED.getSlotsByLayout(i == (size - 1) / 9 ? lastRow : amountInRow).slots;
+            int[] slots = LayoutOption.CENTERED.getSlotsByLayout(i == size / 9 ? lastRow : amountInRow).slots;
             for (int j = 0; j < slots.length; j++)
-                inv.setItem(slots[j] * i + prefix, items.size() > (j * i) ? items.get(j * i) : getBlankSlotItem(getBlankSlotMaterial()));
+                inv.setItem(slots[j] +(9 * (i -1)) + prefix, items.size() >= (j + 9 * (i-1)) ? items.get(j + 9 * (i-1)) : getBlankSlotItem(getBlankSlotMaterial()));
         }
 
         for (int i = 0; i < inv.getSize(); i++)

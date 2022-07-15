@@ -103,7 +103,7 @@ public enum LayoutOption implements Layout{
                     for(int i = 0; i< startPoint; i++)
                         arr[i] = i;
                     int index = 0;
-                    for(int i = space+startPoint; i<size-space; i++)
+                    for(int i = space+startPoint; i<space+itemAmount; i++)
                     {
                         arr[index] = i;
                         index++;

@@ -41,9 +41,6 @@ public abstract class AGUI {
         if(title == null)
             title = "";
         this.title = title;
-
-
-        this.inventory = initInventory();
     }
 
     public AGUI(){
@@ -104,7 +101,7 @@ public abstract class AGUI {
     /**
      * on opening event
      */
-    protected void onOpening(){}
+    protected void onOpening(){this.inventory = this.initInventory();}
 
     /**
      * on closing event

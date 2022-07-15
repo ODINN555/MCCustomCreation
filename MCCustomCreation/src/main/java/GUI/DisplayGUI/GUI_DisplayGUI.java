@@ -8,12 +8,17 @@ import GUI.Layout.LayoutValue;
 import Nodes.FunctionTree;
 import Nodes.INode;
 import Nodes.IReceiveAbleNode;
+import Nodes.IReturningNode;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,16 +81,20 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
 
         LayoutValue val = LayoutOption.CENTERED.getSlotsByLayout(this.primitives.length);
 
-        if(val.size == 54) // TODO warn/error max primitives allowed is less than 45
+        if(val.size == 54)
+        {
+            Logging.log("Maximum amount of function primitives is 45! used 45 out of chosen primitives. also, good luck crushing your game.", LoggingOptions.ERROR);
             val.size -= 9;
+        }
         Inventory inv = Bukkit.createInventory(null,val.size + 9,this.node.getItemReference().getDisplay());
 
         for (int i = 0; i < inv.getSize(); i++)
             inv.setItem(i,getDefaultBlankItem());
         for (int i = 0; i < val.slots.length; i++)
         {
-            inv.setItem(val.slots[i] + 9,DisplayTypesHandler.INSTANCE.getByType(this.primitives[i]).getDisplayItem());
-            this.slotsOfIndexes.put(val.slots[i],i);
+            ItemStack item = DisplayTypesHandler.INSTANCE.getByType(this.primitives[i]).getDisplayItem(this.currentTree.getNext()[i]);
+            inv.setItem(val.slots[i] + 9,item);
+            this.slotsOfIndexes.put(9+val.slots[i],i);
         }
 
         return inv;
@@ -96,25 +105,37 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
         if(event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR))
             return;
         event.setCancelled(true); // no item should be grabbed, then event should always be cancelled
-
         ItemStack currentItem = event.getCurrentItem();
         if(currentItem.equals(returnButton))
             onReturnClicked();
-        else if(slotsOfIndexes.containsKey(event.getSlot())){// is node item stack
-            int index = this.slotsOfIndexes.get(event.getSlot());
+        else if(slotsOfIndexes.containsKey(event.getSlot())) // it is node
+            onPrimitiveClicked(event.getSlot());
+
+    }
+
+        private void onPrimitiveClicked(int slot){
+            if(!slotsOfIndexes.containsKey(slot))
+                return;
+
+            int index = this.slotsOfIndexes.get(slot);
+
             Class clickedClass = this.primitives[index];
+            // next cannot be null, if it is null its a structural error. if it is null it is supposed to return to the previous GUI
             FunctionTree next = this.currentTree.getNext()[index];
 
-            if(next == null || (next.getCurrent() instanceof IReturnable && !(next.getCurrent() instanceof  IReceiveAbleNode))) { // has no next or it is a primitive then need to choose
+            // has no next or it is a primitive then need to choose
+            if (next == null || next.getCurrent() == null || (next.getCurrent() instanceof IReturningNode && !(next.getCurrent() instanceof IReceiveAbleNode))){
+                next = next == null ? new FunctionTree(null, null, this.currentTree) : next;
+                this.currentTree.getNext()[index] = next;
                 GUI_ChooseGUI nextGui = new GUI_ChooseGUI(clickedClass,next);
                 this.next(nextGui,false);
-            }else if(next.getCurrent() instanceof IReceiveAbleNode){ // need to display the next
+            }else if(next.getCurrent() instanceof IReceiveAbleNode){ // has something to display so need to display the next
+
                 Class[] nextPrimitives = ((IReceiveAbleNode) next.getCurrent()).getReceivedTypes();
                 GUI_DisplayGUI gui = new GUI_DisplayGUI(nextPrimitives,(INode) next.getCurrent(),next);
                 this.next(gui,false);
             }
         }
-    }
 
     @Override
     public void initReturnItemInInventory() {
@@ -149,5 +170,21 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
 
     public void setNode(INode node) {
         this.node = node;
+    }
+
+    @Override
+    public void onOpening(){
+        super.onOpening();
+        initReturnItemInInventory();
+        initDisplayItems();
+    }
+
+    public void initDisplayItems(){
+        for (int slot : slotsOfIndexes.keySet()) {
+            int index = slotsOfIndexes.get(slot);
+            FunctionTree next = getCurrentTree().getNext()[index];
+
+            getInventory().setItem(slot,DisplayTypesHandler.INSTANCE.getByType(primitives[index]).getDisplayItem(next));
+        }
     }
 }
