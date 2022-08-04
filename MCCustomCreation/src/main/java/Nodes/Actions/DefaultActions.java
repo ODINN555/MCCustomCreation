@@ -7,7 +7,6 @@ import Nodes.NodeItemStack;
 import Utility.ItemStackUtil;
 import Utility.Logging.Logging;
 import Utility.Logging.LoggingOptions;
-import com.sun.istack.internal.NotNull;
 import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -29,7 +28,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.potion.PotionType;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -1222,7 +1220,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
      * @param receivedTypes the node's received types
      * @param receivedTypesDescriptions the node's received types descriptions
      */
-    DefaultActions(String description, @Nullable Material mat, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
+    DefaultActions(String description,  Material mat, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
         this.description = description;
         this.mat = mat;
         this.key = key;
@@ -1239,7 +1237,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
      * @param receivedTypes the node's received types
      * @param receivedTypesDescriptions the node's received types descriptions
      */
-    DefaultActions(String description, @NotNull ItemStack item, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
+    DefaultActions(String description,  ItemStack item, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
         this.description = description;
         this.mat = item.getType();
         this.item = item;

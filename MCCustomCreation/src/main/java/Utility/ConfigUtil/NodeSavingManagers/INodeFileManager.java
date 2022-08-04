@@ -2,8 +2,6 @@ package Utility.ConfigUtil.NodeSavingManagers;
 
 import Nodes.Events.IEvent;
 import Nodes.FunctionTree;
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -17,14 +15,14 @@ public interface INodeFileManager {
      * @param nodes a map containing the creation's events and their responding nodes tree
      * @return if the save was successful
      */
-    boolean saveCreation(@NotNull String creationName, @Nullable List<FunctionTree> nodes);
+    boolean saveCreation( String creationName,  List<FunctionTree> nodes);
 
     /**
      *
      * @param name a given name
      * @return retrieve the creation with the given name
      */
-    List<FunctionTree> retrieveCreation(@NotNull String name);
+    List<FunctionTree> retrieveCreation( String name);
 
     /**
      * retrieves all the creations

@@ -1,7 +1,6 @@
 package GUI.GUIAtrriutes.ListGUI;
 
 import GUI.Layout.LayoutOption;
-import com.sun.istack.internal.NotNull;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
@@ -75,7 +74,7 @@ public interface IGUIList {
          * @param prefix
          * @return
          */
-    default Inventory getGUIList(InventoryHolder owner, String title, @NotNull List<ItemStack> items, int amountInRow, int prefix,int topPrefix,int bottomPrefix){
+    default Inventory getGUIList(InventoryHolder owner, String title,  List<ItemStack> items, int amountInRow, int prefix,int topPrefix,int bottomPrefix){
         if(items == null)
             items = new ArrayList<>();
         if(amountInRow <= 0)

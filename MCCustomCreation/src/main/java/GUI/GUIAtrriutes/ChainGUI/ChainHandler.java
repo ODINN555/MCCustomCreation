@@ -1,7 +1,5 @@
 package GUI.GUIAtrriutes.ChainGUI;
 
-import com.sun.istack.internal.NotNull;
-
 import java.util.*;
 
 /**
@@ -40,7 +38,7 @@ public class ChainHandler {
      * @param next a given next chainable gui
      * @return the next chainable gui
      */
-    public static IChainable onNext(@NotNull IChainable curr, IChainable next){
+    public static IChainable onNext( IChainable curr, IChainable next){
         UUID ownerId = curr.getCurrentGUI().getOwner().getUniqueId();
         if(getHandler(ownerId) == null)
             setHandler(ownerId,new ChainHandler(curr));

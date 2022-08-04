@@ -3,7 +3,6 @@ package Nodes;
 import Utility.ConfigUtil.Serialization.Serializations;
 import Utility.ItemStackUtil;
 import Utility.PDCUtil;
-import com.sun.istack.internal.NotNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -74,7 +73,7 @@ public class NodeItemStack implements Serializable {
      * @param item a given ItemStack instance
      * @param classRef a given class reference
      */
-    public NodeItemStack(@NotNull ItemStack item, INode classRef){
+    public NodeItemStack( ItemStack item, INode classRef){
         ItemMeta meta = item.getItemMeta();
         this.material = item.getType();
         this.display = meta.getDisplayName();

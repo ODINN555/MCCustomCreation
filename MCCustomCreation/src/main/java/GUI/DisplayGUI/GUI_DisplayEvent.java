@@ -7,7 +7,6 @@ import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
 import Nodes.*;
 import Utility.ItemStackUtil;
-import com.sun.istack.internal.NotNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -96,7 +95,7 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      * @param actions a given FunctionTree list referencing IActions
      * @param event a given event
      */
-    public GUI_DisplayEvent(@NotNull List<FunctionTree> actions, IEvent event) {
+    public GUI_DisplayEvent( List<FunctionTree> actions, IEvent event) {
         super(getActionsAsItemStacks(actions), "Actions for event "+event.getDefaultNodeItem().getDisplay(),7,0,1,0);
         this.functionList = actions;
         this.removeMode = false;
@@ -253,7 +252,7 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      * handles a click on an action node
      * @param node the clicked action node
      */
-    public void onActionNodeClicked(@NotNull NodeItemStack node,int slot){
+    public void onActionNodeClicked( NodeItemStack node,int slot){
         IAction action = (IAction) node.getClassRef();
         if(removeMode)
         {

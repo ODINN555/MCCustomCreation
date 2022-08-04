@@ -2,7 +2,6 @@ package Nodes.Events;
 
 import Nodes.NodeEnum;
 import Nodes.NodeItemStack;
-import com.sun.istack.internal.Nullable;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -305,7 +304,7 @@ public enum DefaultEvents implements Serializable, IEvent, NodeEnum {
      * @param key the node's key
      * @param nodeItemStack the node's NodeItemStack
      */
-    DefaultEvents(String description, String key, @Nullable NodeItemStack nodeItemStack) {
+    DefaultEvents(String description, String key,  NodeItemStack nodeItemStack) {
         this.description = description;
         this.key = key;
         this.nodeItemStack = nodeItemStack;
