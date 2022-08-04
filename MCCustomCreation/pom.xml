@@ -37,14 +37,23 @@
             <artifactId>ProtocolLib</artifactId>
             <version>4.8.0</version>
         </dependency>
-        <!--<dependency>
-            <groupId>com.destroysoko</groupId>
-            <artifactId>patched</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/patched_1.16.5.jar</systemPath>
-        </dependency>-->
-
 
     </dependencies>
+    <build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.1.1</version>
+            <executions>
+                <execution>
+                    <id>attach-javadocs</id>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+    </build>
 </project>
