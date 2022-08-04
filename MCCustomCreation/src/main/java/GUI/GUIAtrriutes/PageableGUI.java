@@ -183,6 +183,7 @@ public abstract class PageableGUI extends AGUI {
 
         this.onPageChange(this.page,page);
         this.page = page;
+        initPageItemStacks();
         return page;
     }
 
@@ -196,12 +197,12 @@ public abstract class PageableGUI extends AGUI {
 
     @Override
     protected void onClick(InventoryClickEvent event){
-        if(event.getCurrentItem() == null)
+        if(event.getCurrentItem() == null || event.getCurrentItem().getType().equals(Material.AIR))
             return;
-        if(event.getCurrentItem().equals(nextPageItemStack))
-            setPage((event.isLeftClick()? maxPageCount : page +1));
 
-        if(event.getCurrentItem().equals(prevPageItemStack))
-            setPage((event.isShiftClick()? 0 : page -1));
+        if(event.getCurrentItem().equals(nextPageItemStack))
+            setPage((event.isShiftClick()? maxPageCount : page +1));
+        else if(event.getCurrentItem().equals(prevPageItemStack))
+                setPage((event.isShiftClick()? 1 : page -1));
     }
 }

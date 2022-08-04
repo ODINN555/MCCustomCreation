@@ -10,9 +10,17 @@ import org.bukkit.inventory.ItemStack;
  *
  * *true primitive - a function which returns a default value, the default value is a constant which is chosen before runtime.
  */
-public abstract class TruePrimitive<T> implements IPrimitive{
+public abstract class TruePrimitive<T> implements IPrimitive,Cloneable{
 
-    private T value;
+    /**
+     * The primitive's value
+     */
+    private transient T value;
+
+    /**
+     *
+     * @param value the primitive's value
+     */
     public TruePrimitive(T value){
         this.value = value;
     }
@@ -21,6 +29,10 @@ public abstract class TruePrimitive<T> implements IPrimitive{
         this.value = null;
     }
 
+    /**
+     *
+     * @return the default display item
+     */
     public abstract ItemStack getDefaultDisplayItem();
 
     @Override
@@ -41,6 +53,20 @@ public abstract class TruePrimitive<T> implements IPrimitive{
         this.value = value;
     }
 
+    /**
+     * handles a choose of this node on the given gui
+     * @param gui a given choosing gui
+     */
     public abstract void onChosen(GUI_ChooseGUI gui);
 
+    /**
+     *
+     * @return a new instance of the true primitive
+     */
+    public abstract TruePrimitive clone();
+
+    @Override
+    public String getDescription(){
+        return "Raw "+getKeyAsDisplay()+" value.\nRaw values are user input values.";
+    }
 }

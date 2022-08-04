@@ -14,8 +14,6 @@ public interface IChainable {
      * @param removeCurrent if to remove the current gui
      */
       default void next(IChainable gui,boolean removeCurrent){
-
-
            IChainable curr;
            if(removeCurrent)
            {
@@ -24,7 +22,8 @@ public interface IChainable {
            }else curr = this;
             ChainHandler.onNext(curr,gui);
             getCurrentGUI().close();
-            gui.getCurrentGUI().open(getCurrentGUI().getOwner());
+            if(gui != null)
+                gui.getCurrentGUI().open(getCurrentGUI().getOwner());
 
       }
 

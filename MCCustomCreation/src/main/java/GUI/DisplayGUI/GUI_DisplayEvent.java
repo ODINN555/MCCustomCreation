@@ -3,26 +3,20 @@ package GUI.DisplayGUI;
 import GUI.ChooseGUIs.GUI_ChooseGUI;
 import GUI.GUIAtrriutes.ChainGUI.IReturnable;
 import GUI.GUIAtrriutes.ListGUI.ListableGUI;
+import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
 import Nodes.*;
 import Utility.ItemStackUtil;
-import Utility.Logging.Logging;
-import Utility.Logging.LoggingOptions;
 import com.sun.istack.internal.NotNull;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import sun.rmi.runtime.Log;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -30,7 +24,7 @@ import java.util.stream.Collectors;
  */
 public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
 
-    private IEvent event;
+    private EventInstance event;
     /**
      * The returnItem ItemStack instance of this GUI
      */
@@ -67,23 +61,47 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
     private static final int returnItemSlot = 0;
 
     /**
-     * A map containing all the IActions of the event which is displayed by this GUI and their FunctionTree reference
+     * If the GUI is on "swap actions" mode
      */
-    private Map<IAction,FunctionTree> actionsOfTrees;
+    private boolean swapActionsMode;
+
+    /**
+     * The swap actions item slot
+     */
+    private static final int SWAP_ACTIONS_ITEM_SLOT = 6;
+
+    /**
+     * The swap actions item material
+     */
+    private static final Material SWAP_ACTION_MATERIAL = Material.YELLOW_STAINED_GLASS;
+
+    /**
+     * The current selected for swap item's slot. -1 if non selected.
+     */
+    private int selectedSwapSlot;
+
+    private static final int CANCEL_SLOT = 1;
+    /**
+     * The function tree list to display
+     */
     private List<FunctionTree> functionList;
+
+    /**
+     * Map<Slot,FunctionTree>, the map represents the slots of the function trees
+     */
+    private Map<Integer,FunctionTree> indexes ;
+
     /**
      *
      * @param actions a given FunctionTree list referencing IActions
      * @param event a given event
      */
     public GUI_DisplayEvent(@NotNull List<FunctionTree> actions, IEvent event) {
-        super(getActionsAsItemStacks(actions), "Actions for event "+event.getDefault().getDisplay(),6,0);
-        this.actionsOfTrees = new HashMap<>();
+        super(getActionsAsItemStacks(actions), "Actions for event "+event.getDefaultNodeItem().getDisplay(),7,0,1,0);
         this.functionList = actions;
-        for (FunctionTree action : actions)
-            actionsOfTrees.put((IAction) action.getCurrent(),action);
         this.removeMode = false;
-        this.event = event;
+        this.event = (EventInstance) event;
+        selectedSwapSlot = -1;
     }
 
     /**
@@ -93,7 +111,7 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      */
     private static List<ItemStack> getActionsAsItemStacks(List<FunctionTree> actions){
         return actions.stream()
-                .filter(obj -> (obj.getCurrent() instanceof IAction))
+                .filter(obj -> (obj != null && obj.getCurrent() instanceof IAction))
                 .map(action -> ((IAction)action.getCurrent()).getItemReference().getItemStack())
                 .collect(Collectors.toList());
     }
@@ -105,6 +123,7 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
     public GUI_DisplayEvent(IEvent event){
         this(new ArrayList<>(),event);
     }
+
     @Override
     public void onClosing() {
         IReturnable.super.onClosing();
@@ -113,25 +132,36 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
     @Override
     public void onOpening(){
 
-        if(actionsOfTrees.containsKey(null)){
-            if(actionsOfTrees.get(null).getCurrent() == null)
-                functionList.remove(actionsOfTrees.remove(null));
-            else {
-                actionsOfTrees.put((IAction) actionsOfTrees.get(null).getCurrent(), actionsOfTrees.get(null));
-                actionsOfTrees.remove(null);
-                this.itemsList = getActionsAsItemStacks(actionsOfTrees.values().stream().collect(Collectors.toList()));
-            }
-        }
+        this.indexes = new HashMap<>();
+    if(functionList.size() > 0)
+    if(functionList.get(functionList.size() -1) == null || functionList.get(functionList.size() -1).getCurrent() == null){
+        functionList.remove(functionList.size() -1);
+    }
+
+        this.itemsList = getActionsAsItemStacks(functionList);
         super.onOpening();
         if(removeMode)
             removeMode = false;
+        this.swapActionsMode = false;
+        this.selectedSwapSlot = -1;
+        int index = 0;
+        for(int i = 0; i < getInventory().getSize(); i++)
+            if(NodeItemStack.isNodeItemStack(getInventory().getItem(i))) {
+                indexes.put(i, functionList.get(index));
+                index++;
+            }
+        initSetCancelledItem();
         initAddActionItemInInventory();
         initRemoveActionItemInInventory();
         initReturnItemInInventory();
         initDisplayActionItems();
+        initSwapActionsItem();
         updateInventory();
     }
 
+    /**
+     * initializes the display items
+     */
     public void initDisplayActionItems(){
 
         for (int i =0; i< getInventory().getSize(); i++) {
@@ -140,14 +170,14 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
             {
 
                 ItemMeta meta = itemStack.getItemMeta();
-                IAction action = (IAction) NodeItemStack.getNodeFromItem(itemStack).getClassRef();
-                FunctionTree tree = actionsOfTrees.get(getKeyByName(action.getKey()));
+                FunctionTree tree = indexes.get(i);
                 meta.setLore(DisplayTypesHandler.INSTANCE.getFunctionTreeDisplayOnNode(tree));
                 itemStack.setItemMeta(meta);
                 getInventory().setItem(i,itemStack);
             }
         }
     }
+
 
     @Override
     public void initReturnItemInInventory() {
@@ -201,15 +231,21 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         ItemStack currentItem = event.getCurrentItem();
         if(currentItem.equals(returnItemInstance)) {
             onReturnClicked();
-
-        }
-        else if(currentItem.equals(this.addActionItemInstance)){// add item
+        }else if(event.getSlot() == CANCEL_SLOT){
+            toggleCancelled(!this.event.isCancelled());
+        } else if(currentItem.equals(this.addActionItemInstance)){// add item
                 this.onAddActionClicked();
 
         } else if(currentItem.equals(this.removeActionItemInstance)){
-                this.toggleRemoveMode();
+                if(swapActionsMode)
+                    this.toggleSwapActionsMode(false);
+            this.toggleRemoveMode();
         }else if(NodeItemStack.isNodeItemStack(currentItem)) {
-            onActionNodeClicked(NodeItemStack.getNodeFromItem(currentItem));
+            onActionNodeClicked(NodeItemStack.getNodeFromItem(currentItem),event.getSlot());
+        }else if(event.getSlot() == SWAP_ACTIONS_ITEM_SLOT) {
+            toggleSwapActionsMode(!swapActionsMode);
+            if(removeMode)
+                toggleRemoveMode();
         }
     }
 
@@ -217,23 +253,30 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      * handles a click on an action node
      * @param node the clicked action node
      */
-    public void onActionNodeClicked(@NotNull NodeItemStack node){
+    public void onActionNodeClicked(@NotNull NodeItemStack node,int slot){
         IAction action = (IAction) node.getClassRef();
-        if(getKeyByName(action.getKey()) == null) {
-            Logging.log("There is no action with the specified key. Key: "+action.getKey(), LoggingOptions.ERROR);
-            return;
-        }
         if(removeMode)
         {
-            this.functionList.remove(this.actionsOfTrees.get(getKeyByName(action.getKey())));
-            this.actionsOfTrees.remove(getKeyByName(action.getKey()));
-            functionList.addAll(this.actionsOfTrees.values());
+            this.functionList.remove(indexes.get(slot));
             GUI_DisplayEvent gui = new GUI_DisplayEvent(functionList, this.event);
             this.next(gui,true);
+        }else if(swapActionsMode) {
+            if(selectedSwapSlot == slot)
+                toggleSwapActionsMode(false);
+            else{
+                if(selectedSwapSlot == -1) {
+                    selectedSwapSlot = slot;
+                    selectSwap(slot);
+                }else {
+                    Collections.swap(this.functionList,this.functionList.indexOf(this.indexes.get(slot)),this.functionList.indexOf(this.indexes.get(selectedSwapSlot)));
+                    GUI_DisplayEvent gui = new GUI_DisplayEvent(functionList, this.event);
+                    this.next(gui,true);
+                }
+            }
         }else {
             if(action.getReceivedTypes().length == 0)
                 return;
-            GUI_DisplayGUI gui = new GUI_DisplayGUI(action, this.actionsOfTrees.get(getKeyByName(action.getKey())));
+            GUI_DisplayGUI gui = new GUI_DisplayGUI(action,this.indexes.get(slot));
             this.next(gui, false);
         }
     }
@@ -243,28 +286,15 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
      */
     public void onAddActionClicked(){
         FunctionTree tree = new FunctionTree(null);
-        actionsOfTrees.put(null,tree);
         functionList.add(tree);
         GUI_ChooseGUI gui = new GUI_ChooseGUI(NodesHandler.INSTANCE.getActionMap().values().stream()
                 .filter(action ->{ // filter the ones already exists, if duplicable then it gets displayed
-            if(getKeyByName(action.getKey()) == null)
-                return true;
-            else return (action instanceof IDuplicableAction);
+             if(action instanceof IDuplicableAction)
+                    return ((IDuplicableAction) action).isDuplicable();
+            return false;
         }).collect(Collectors.toList()),tree,"Choose Action");
 
         this.next(gui,false);
-    }
-
-    /**
-     *
-     * @param key a given key name
-     * @return an IAction from the map which it's type is equals to the key
-     */
-    public IAction getKeyByName(String key){
-        for (IAction action : this.actionsOfTrees.keySet())
-           if(action != null && action.getKey().equalsIgnoreCase(key))
-               return action;
-        return null;
     }
 
     /**
@@ -307,6 +337,88 @@ public class GUI_DisplayEvent extends ListableGUI implements IReturnable {
         updateInventory();
     }
 
+    /**
+     * toggles the 'swap actions' mode
+     * @param flag the flag to toggle to
+     */
+    private void toggleSwapActionsMode(boolean flag){
+        this.swapActionsMode = flag;
+        if(!swapActionsMode) {
+            setNormalView();
+            this.selectedSwapSlot = -1;
+        }
+        initSwapActionsItem();
+    }
 
+    /**
+     * selects a slot for a swap
+     * @param slot a given slot
+     */
+    private void selectSwap(int slot){
+        getInventory().getItem(slot).setType(SWAP_ACTION_MATERIAL);
+        updateInventory();
+    }
+
+    /**
+     *
+     * @return the default swap actions item
+     */
+    private ItemStack getDefaultSwapActionsItem(){
+        ItemStack removeItem = ItemStackUtil.newItemStack(Material.COMPARATOR, ChatColor.GOLD+"Swap Actions");
+        ItemMeta meta = removeItem.getItemMeta();
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+
+        if(swapActionsMode)
+            meta.addEnchant(Enchantment.MENDING,1,true);
+        removeItem.setItemMeta(meta);
+        return removeItem;
+    }
+
+    /**
+     * initializes the swap actions item in the inventory
+     */
+    private void initSwapActionsItem(){
+        getInventory().setItem(SWAP_ACTIONS_ITEM_SLOT,getDefaultSwapActionsItem());
+        updateInventory();
+    }
+
+    /**
+     *
+     * @return a new "set event cancelled" item instance
+     */
+    private ItemStack getSetCancelledItem(){
+        boolean cancelled = false;
+        if(this.event != null)
+            cancelled = this.event.isCancelled();
+
+        final Material CANCELLED_MATERIAL = Material.GREEN_STAINED_GLASS;
+        final ChatColor CANCELLED_COLOR = ChatColor.GREEN;
+        final Material NOT_CANCELLED_MATERIAL = Material.RED_STAINED_GLASS;
+        final ChatColor NOT_CANCELLED_COLOR = ChatColor.RED;
+
+        String description = cancelled ? "Cancelled" : "Not Cancelled";
+        Material mat = cancelled ? CANCELLED_MATERIAL : NOT_CANCELLED_MATERIAL;
+        ChatColor color = cancelled ? CANCELLED_COLOR : NOT_CANCELLED_COLOR;
+        return ItemStackUtil.newItemStack(mat,color+"Toggle Cancelled",Arrays.asList(ChatColor.GRAY+description));
+    }
+
+    /**
+     * initializes the "set event cancelled" item in the inventory
+     */
+    public void initSetCancelledItem(){
+        getInventory().setItem(CANCEL_SLOT,getSetCancelledItem());
+        updateInventory();
+    }
+
+    /**
+     * sets by the given flag if the displayed event should be cancelled
+     * @param flag a given flag
+     */
+    private void toggleCancelled(boolean flag){
+        if(this.event == null)
+            return;
+        this.event.setCancelled(flag);
+        initSetCancelledItem();
+    }
 
 }

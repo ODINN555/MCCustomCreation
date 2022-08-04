@@ -1,7 +1,5 @@
 package Nodes;
 
-import Exceptions.InappropriateArgumentsException;
-
 /**
  * An interface representing an Action*
  *
@@ -9,19 +7,12 @@ import Exceptions.InappropriateArgumentsException;
  */
 public interface IAction extends IReceiveAbleNode{
 
+    /**
+     * performs this action
+     * @param params given parameters
+     * @return if the action was successful
+     */
     boolean action(Object... params);
 
-    
-
-    default boolean checkParameters(IAction action, Object... params){
-        if(params.length < action.getReceivedTypes().length)
-            throw new InappropriateArgumentsException(IAction.class,action.getReceivedTypes(), params);
-
-        for(int i = 0; i < action.getReceivedTypes().length; i++)
-            if(!action.getReceivedTypes()[i].equals(params[i].getClass()))
-                throw new InappropriateArgumentsException(IAction.class,action.getReceivedTypes(),params);
-
-        return true;
-    }
 
 }

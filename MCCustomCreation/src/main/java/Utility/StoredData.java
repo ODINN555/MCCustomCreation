@@ -9,23 +9,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 /**
- * A PersistentDataType generic class, allows any Serializable object to be serialized inside an PDC
- * @param <T> The stored data type
+ * A PersistentDataType class which represents a byte[] data type since any object is first serialized to a byte[] through serializations
  */
-public class StoredData<T> implements PersistentDataType<byte[] ,T> {
+public class StoredData implements PersistentDataType<byte[] ,byte[]> {
 
-    /**
-     * The stored data class type
-     */
-    private Class<T> dataClass;
 
-    public StoredData(Class<T> dataClass){
-        this.dataClass = dataClass;
-    }
+    public StoredData(){}
 
     @Override
-    public Class<T> getComplexType() {
-        return dataClass;
+    public Class<byte[]> getComplexType() {
+        return byte[].class;
     }
 
     @Override
@@ -34,7 +27,7 @@ public class StoredData<T> implements PersistentDataType<byte[] ,T> {
     }
 
     @Override
-    public byte[] toPrimitive(T arg0, PersistentDataAdapterContext arg1) {
+    public byte[] toPrimitive(byte[] arg0, PersistentDataAdapterContext arg1) {
         try {
             ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
             BukkitObjectOutputStream bukkitOut = new BukkitObjectOutputStream(byteOut);
@@ -54,12 +47,12 @@ public class StoredData<T> implements PersistentDataType<byte[] ,T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public T fromPrimitive(byte[] arg0, PersistentDataAdapterContext arg1) {
+    public byte[] fromPrimitive(byte[] arg0, PersistentDataAdapterContext arg1) {
         try {
             ByteArrayInputStream byteIn = new ByteArrayInputStream(arg0);
             BukkitObjectInputStream bukkitIn = new BukkitObjectInputStream(byteIn);
 
-            return (T) bukkitIn.readObject();
+            return (byte[]) bukkitIn.readObject();
         }catch(Exception e) {
             return null;
         }

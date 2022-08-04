@@ -73,18 +73,29 @@ public class DisplayTypesHandler {
         return getCustom(type);
     }
 
+    /**
+     *
+     * @param node a given node
+     * @param nameColor the color of the display name
+     * @param otherColor the color for other things
+     * @return The display of the function tree of a node
+     */
     public List<String> getFunctionTreeDisplayOnNode(FunctionTree node, ChatColor nameColor, ChatColor otherColor){
         if(node == null)
             return new ArrayList<>();
         List<String> lore = new ArrayList<>();
-        lore.add(otherColor+"Current - "+nameColor+ ((INode) node.getCurrent()).getKey()+otherColor);
+        lore.add(otherColor+"Current - "+nameColor+ (node.getCurrent() != null ? ((INode) node.getCurrent()).getKeyAsDisplay() : "none") +otherColor);
         lore.add("");
         String next = otherColor+"  - Next: ";
         if(node.getNext() == null) {
             next += nameColor;
-            if(node.getCurrent() instanceof TruePrimitive)
-                next += ((TruePrimitive) node.getCurrent()).getValue();
-            else next += "null";
+            if(node.getCurrent() instanceof IPrimitive) {
+                if(node.getCurrent() instanceof TruePrimitive) {
+                    TruePrimitive tp = ((TruePrimitive) node.getCurrent());
+                    next += tp.getValue() == null ? "none" : tp.getValue();
+                }else next =""; // if primitive don't add anything
+            }
+            else next += "none";
 
             lore.add(next);
             return lore;
@@ -94,14 +105,19 @@ public class DisplayTypesHandler {
         for (FunctionTree tree : node.getNext()) {
             String nextNode = otherColor + "           - ";
             if(tree == null || tree.getCurrent() == null)
-                nextNode += nameColor + "null";
-            else nextNode += nameColor + ((INode) tree.getCurrent()).getKey();
+                nextNode += nameColor + "none";
+            else nextNode += nameColor + ((INode) tree.getCurrent()).getKeyAsDisplay();
             lore.add(nextNode+= ChatColor.RESET);
         }
 
         return lore;
     }
 
+    /**
+     *
+     * @param node a given node
+     * @return the display of the given function tree node, with the default colors
+     */
     public List<String> getFunctionTreeDisplayOnNode(FunctionTree node){
         final ChatColor NAME_COLOR = ChatColor.GOLD;
         final ChatColor OTHER_COLOR = ChatColor.GRAY;
@@ -109,6 +125,14 @@ public class DisplayTypesHandler {
         return getFunctionTreeDisplayOnNode(node,NAME_COLOR,OTHER_COLOR);
     }
 
+    /**
+     *
+     * @param mat a given material
+     * @param name a given name
+     * @param nameColor a given name color
+     * @param tree a given function tree
+     * @return a new default display item with the given parameters
+     */
     public ItemStack createDefaultDisplayType(Material mat,String name , ChatColor nameColor,FunctionTree tree){
         if(mat == null)
             return null;

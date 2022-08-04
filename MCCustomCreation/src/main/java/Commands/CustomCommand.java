@@ -1,6 +1,5 @@
 package Commands;
 
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;

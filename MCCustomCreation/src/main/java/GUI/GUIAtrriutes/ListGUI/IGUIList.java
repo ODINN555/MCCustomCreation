@@ -10,8 +10,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,19 +27,33 @@ public interface IGUIList {
      * @param prefix a given prefix for every row. + for prefix and - for suffix
      * @return the modified inventory
      */
-    default Inventory getGUIList(List<ItemStack> items,Inventory inv,int amountInRow,int prefix){
+    default Inventory getGUIList(List<ItemStack> items,Inventory inv,int amountInRow,int prefix,int topPrefix,int bottomPrefix){
 
         if(prefix+ amountInRow > 9)
             throw new IllegalArgumentException("Illegal Arguments, amountInRow and prefix can't be greater than 9. amountInRow: "+amountInRow+" prefix: "+prefix);
-        int rows = items.size() / amountInRow;
-        int size = 9 + (rows) * 9;
-        size = size >= 54 ? 54 : size;
-        int lastRow = rows > 6? amountInRow : items.size() % amountInRow;
+        if(inv.getSize() == (topPrefix + bottomPrefix)*9)
+            throw new IllegalArgumentException("Illegal Arguments, the sum of top and bottom prefixes cannot be equal or greater than the max inventory rows. top: "+topPrefix+" bottom: "+bottomPrefix+" size: "+inv.getSize());
 
-        for(int i = 1; i <= size / 9;i++) {
-            int[] slots = LayoutOption.CENTERED.getSlotsByLayout(i == size / 9 ? lastRow : amountInRow).slots;
-            for (int j = 0; j < slots.length; j++)
-                inv.setItem(slots[j] +(9 * (i -1)) + prefix, items.size() >= (j + 9 * (i-1)) ? items.get(j + 9 * (i-1)) : getBlankSlotItem(getBlankSlotMaterial()));
+        int rows = items.size() / amountInRow;
+        int size = 9 + (rows + topPrefix + bottomPrefix) * 9;
+        size = size >= 54 ? 54 : size;
+        int lastRow = rows >= 6 ? amountInRow : items.size() % amountInRow;
+
+
+        // reset items
+        int start = topPrefix <=0 ? 0 : topPrefix;
+        int end = bottomPrefix <= 0 ? 0 : bottomPrefix;
+
+        int[] slotsToReset = LayoutOption.CENTERED.getSlotsByLayout(amountInRow).slots;
+        for(int i = start; i < inv.getSize()/9 - end; i++) // rows
+            for(int j = 0; j < slotsToReset.length; j++) // slot each row
+                inv.setItem(prefix + slotsToReset[j] + 9 * i,getBlankSlotItem(getBlankSlotMaterial()));
+
+        for(int i = 1 + start; i <= size / 9 - end;i++) { // rows
+            int[] slots = LayoutOption.CENTERED.getSlotsByLayout(i == size / 9 - end ? lastRow : amountInRow).slots;
+            for (int j = 0; j < slots.length; j++) { // the indexes of the slot in the slots array
+                inv.setItem(slots[j] + (9 * (i - 1)) + prefix, items.size() >= (j + amountInRow * (i - 1 -start)) ? items.get(j + amountInRow * (i - 1 -start)) : getBlankSlotItem(getBlankSlotMaterial()));
+            }
         }
 
         for (int i = 0; i < inv.getSize(); i++)
@@ -51,25 +63,28 @@ public interface IGUIList {
             return inv;
     }
 
-    /**
-     *
-     * @param owner a given holder
-     * @param title a given title
-     * @param items a given item list
-     * @param amountInRow a given
-     * @param prefix
-     * @return
-     */
-    default Inventory getGUIList(InventoryHolder owner, String title, @NotNull List<ItemStack> items, int amountInRow, int prefix){
+    default Inventory getGUIList(List<ItemStack> items,Inventory inv,int amountInRow,int prefix) {
+        return this.getGUIList(items,inv,amountInRow,prefix,0,0);
+    }
+        /**
+         *
+         * @param owner a given holder
+         * @param title a given title
+         * @param items a given item list
+         * @param amountInRow a given
+         * @param prefix
+         * @return
+         */
+    default Inventory getGUIList(InventoryHolder owner, String title, @NotNull List<ItemStack> items, int amountInRow, int prefix,int topPrefix,int bottomPrefix){
         if(items == null)
             items = new ArrayList<>();
         if(amountInRow <= 0)
             amountInRow =1;
         int rows = items.size() / amountInRow;
-        int size = 9 + (rows) * 9;
+        int size =  (1+ rows + topPrefix + bottomPrefix) * 9;
         size = size >= 54 ? 54 : size;
         Inventory i = Bukkit.createInventory(owner,size,title);
-        return getGUIList(items,i,amountInRow,prefix);
+        return getGUIList(items,i,amountInRow,prefix,topPrefix,bottomPrefix);
     }
 
     /**
