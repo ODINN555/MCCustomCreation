@@ -4,13 +4,10 @@ import GUI.DisplayGUI.GUI_DisplayGUI;
 import GUI.GUIAtrriutes.ChainGUI.IReturnable;
 import GUI.GUIAtrriutes.ListGUI.ListableGUI;
 import Nodes.*;
-import Utility.Logging.Logging;
-import Utility.Logging.LoggingOptions;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,11 +37,11 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
         this(Stream.concat( // make 1 big list out of all primitives and parameters which their return type matches the given one
                 NodesHandler.INSTANCE.getPrimitiveMap().values()
                         .stream()
-                        .filter(p -> p.getReturnType().isAssignableFrom(returnType))
+                        .filter(p -> returnType.isAssignableFrom(p.getReturnType()))
 
                 ,NodesHandler.INSTANCE.getParameterMap().values()
                         .stream()
-                        .filter(p -> p.getReturnType().isAssignableFrom(returnType)))
+                        .filter(p -> returnType.isAssignableFrom(p.getReturnType())))
                             .collect(Collectors.toList())
                 ,currentTree,"Choose A "+returnType.getSimpleName());
 
@@ -137,4 +134,5 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
     public ItemStack getReturnItem() {
         return returnItem;
     }
+
 }

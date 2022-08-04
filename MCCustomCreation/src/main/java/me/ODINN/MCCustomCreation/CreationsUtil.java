@@ -12,6 +12,7 @@ public class CreationsUtil {
      * Singleton implementation
      */
     public static final String CREATIONS_PDC_KEY = "Creation";
+    public static final CreationsUtil INSTANCE = new CreationsUtil();
     private CreationsUtil(){}
 
     /**
@@ -20,7 +21,7 @@ public class CreationsUtil {
      * @return if the item has a creation in it
      */
     public static boolean isCreation(ItemStack item){
-        return PDCUtil.has(item,CREATIONS_PDC_KEY,String.class);
+        return PDCUtil.has(item,CREATIONS_PDC_KEY);
     }
 
     /**
@@ -29,7 +30,7 @@ public class CreationsUtil {
      * @return the item's creation
      */
     public static String getCreationFromItem(ItemStack item){
-        return PDCUtil.get(item,CREATIONS_PDC_KEY,String.class);
+        return PDCUtil.get(item,CREATIONS_PDC_KEY);
     }
 
     /**
@@ -38,7 +39,7 @@ public class CreationsUtil {
      * @param creation a given creation name
      */
     public static void setCreationIntoItem(ItemStack item,String creation){
-        PDCUtil.set(item,CREATIONS_PDC_KEY,String.class,creation);
+        PDCUtil.set(item,CREATIONS_PDC_KEY,creation);
     }
 
     /**

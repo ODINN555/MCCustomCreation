@@ -46,8 +46,8 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
          List<FunctionTree> trees = new ArrayList<>();
          list.forEach(map -> {
              try {
-                 trees.add(FunctionTree.deserialize(null,map));
-             } catch (CloneNotSupportedException e) {
+                 trees.add(FunctionTree.deserialize(null,map,name));
+             } catch (CloneNotSupportedException | ClassNotFoundException e) {
                  e.printStackTrace();
              }
          });
@@ -79,5 +79,10 @@ public class NodeYAMLManager extends YmlManager implements INodeFileManager {
             map.put(creation,event);
         }
         return map;
+    }
+
+    @Override
+    public void clearCreations() {
+        set(FATHER_KEY,null);
     }
 }

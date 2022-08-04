@@ -5,13 +5,13 @@ import Nodes.INode;
 import Nodes.NodeItemStack;
 import Utility.Logging.Logging;
 import Utility.Logging.LoggingOptions;
-import Utility.PDCUtil;
-import me.ODINN.MCCustomCreation.CreationsManager;
 import me.ODINN.MCCustomCreation.CreationsUtil;
 import me.ODINN.MCCustomCreation.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
@@ -23,27 +23,21 @@ import java.util.Locale;
  */
 public interface IEvent extends INode, Listener {
 
-
-
     /**
      * The default event node item material
      */
     Material DEFAULT_EVENT_MATERIAL = Material.RED_STAINED_GLASS_PANE;
+
     /**
      * The default event node item name color
      */
     ChatColor DEFAULT_NAME_COLOR = ChatColor.GOLD;
 
     /**
-     * The default event node item description color
-     */
-    ChatColor DEFAULT_DESCRIPTION_COLOR = ChatColor.GRAY;
-
-    /**
      *
      * @return the default node item of this event
      */
-    default NodeItemStack getDefault(){
+    default NodeItemStack getDefaultNodeItem(){
         String display = getKey().toLowerCase(Locale.ROOT);
         String[] arr = display.split("_");
         display = "";
@@ -53,21 +47,29 @@ public interface IEvent extends INode, Listener {
         return new NodeItemStack(DEFAULT_EVENT_MATERIAL,DEFAULT_NAME_COLOR+display,null,1,this);
     }
 
-    default void executeEvent(ItemStack item, LivingEntity executor){
+    /**
+     * executes the event
+     * @param item a given item
+     * @param executor a given executor entity
+     */
+    default void executeEvent(ItemStack item, LivingEntity executor, Event listenedEvent){
         if(CreationsUtil.isCreation(item)){
             String creationName = CreationsUtil.getCreationFromItem(item);
             if(!Main.getCreationsManager().isValid(creationName)) {
-                Logging.log("Tried to execute a creation which is not valid. creation: "+creationName+"\nFunctions: "+Main.getCreationsManager().getCreation(creationName), LoggingOptions.ERROR);
+                Logging.log("Tried to execute a creation which is not valid. creation: "+creationName, LoggingOptions.ERROR);
                 return;
             }
-            List<FunctionTree> event = Main.getCreationsManager().getEventFromCreation(creationName,this);
-            if(event != null)
+            List<FunctionTree> events = Main.getCreationsManager().getEventFromCreation(creationName,this);
+            if(events != null)
             {
-
-                for (FunctionTree functionTree : event) // execute all actions!
+                NodeExecutionEvent event = new NodeExecutionEvent(this,listenedEvent,creationName);
+                Bukkit.getPluginManager().callEvent(event);
+                if(!event.isCancelled())
+                for (FunctionTree functionTree : events) // execute all actions!
                         FunctionTree.executeFunction(functionTree,executor,item);
             }
 
         }
     }
+
 }

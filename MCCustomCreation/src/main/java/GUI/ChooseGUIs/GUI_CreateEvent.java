@@ -4,6 +4,7 @@ package GUI.ChooseGUIs;
 import GUI.DisplayGUI.GUI_DisplayEvent;
 import GUI.GUIAtrriutes.ChainGUI.IChainable;
 import GUI.GUIAtrriutes.ListGUI.ListableGUI;
+import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
 import Nodes.FunctionTree;
 import Nodes.NodeItemStack;
@@ -12,7 +13,10 @@ import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -29,17 +33,22 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
     Map<IEvent,List<FunctionTree>> events;
 
     /**
+     * The creation to create events for
+     */
+    private String creation;
+    /**
      *
      * @param events a given current state* map
      */
-    public GUI_CreateEvent(Map<IEvent,List<FunctionTree>> events) {
+    public GUI_CreateEvent(Map<IEvent,List<FunctionTree>> events, String creation) {
         super(new ArrayList<>(NodesHandler.INSTANCE.getEvents().values()
                 .stream()
                 .map(event -> event.getItemReference().getItemStack())
-                .collect(Collectors.toList())),"Edit Events",7,0);
+                .collect(Collectors.toList())),"Edit Events for creation "+creation,7,0);
         if(events == null)
             events = new HashMap<>();
         this.events = events;
+        this.creation = creation;
     }
 
 
@@ -75,11 +84,11 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
         GUI_DisplayEvent gui;
 
         if(containsEvent(event.getKey()))
-            gui = new GUI_DisplayEvent(getByName(event.getKey()),event);
+            gui = new GUI_DisplayEvent(getByName(event.getKey()),getKeyByName(event.getKey()));
         else{
             List<FunctionTree> list = new ArrayList<>();
-            events.put(event,list);
-            gui = new GUI_DisplayEvent(list,event);
+            events.put(new EventInstance(event,false,this.creation),list);
+            gui = new GUI_DisplayEvent(list,getKeyByName(event.getKey()));
         }
 
 
@@ -114,6 +123,18 @@ public class GUI_CreateEvent extends ListableGUI implements IChainable {
         return null;
     }
 
+    /**
+     *
+     * @param name a given name
+     * @return the key from this gui's events which matches the give name
+     */
+    private IEvent getKeyByName(String name){
+        for(IEvent event : events.keySet())
+            if(event != null && event.getKey().equalsIgnoreCase(name))
+                return event;
+
+            return null;
+    }
 
 
 

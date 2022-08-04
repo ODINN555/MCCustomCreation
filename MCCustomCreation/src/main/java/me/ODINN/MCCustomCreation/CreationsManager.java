@@ -118,9 +118,14 @@ public class CreationsManager {
      * @return a new instance of the creations registry map
      */
     public Map<String, Map<IEvent, List<FunctionTree>>> getCreationsMap(){
-        return new HashMap<>(creations);
+        return creations;
     }
 
+    /**
+     *
+     * @param creation a given creation
+     * @return if the given creation is valid to execute
+     */
     public boolean isValid(String creation){
         if(getCreation(creation ) == null)
             return false;
@@ -129,8 +134,10 @@ public class CreationsManager {
         for (IEvent event : map.keySet()) {
             List<FunctionTree> list = map.get(event);
             for (FunctionTree functionTree : list)
-                if(!functionTree.isValid())
+                if(functionTree == null || !functionTree.isValid()) {
+                    Logging.log("There is an invalid Event on creation "+creation+". Event: "+event.getKey()+". Function: "+functionTree,LoggingOptions.ERROR);
                     return false;
+                }
         }
         return true;
     }

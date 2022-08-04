@@ -36,7 +36,8 @@ public interface INodeFileManager {
      * saves the given creations
      * @param creations given creations
      */
-   default void saveCreations(Map<String,Map<IEvent,List<FunctionTree>>> creations){
+   default void saveAllCreations(Map<String,Map<IEvent,List<FunctionTree>>> creations){
+       clearCreations();
        creations.forEach((name,nodes) -> {
            List<FunctionTree> events = nodes.keySet().stream()
                    .map(e -> new FunctionTree(e,nodes.get(e).toArray(new FunctionTree[0]),null))
@@ -44,6 +45,11 @@ public interface INodeFileManager {
            saveCreation(name,events);
        });
    }
+
+    /**
+     * deletes (clears) all creations from the file
+     */
+   void clearCreations();
 
 
 }

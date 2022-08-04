@@ -1,11 +1,10 @@
 package Commands;
 
-import Utility.ConfigUtil.YmlManager;
-import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A command for testing purposes only

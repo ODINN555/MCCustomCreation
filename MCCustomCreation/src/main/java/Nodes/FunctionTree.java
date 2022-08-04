@@ -1,19 +1,18 @@
 package Nodes;
 
+import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
-import Utility.Logging.Logging;
-import Utility.Logging.LoggingOptions;
+import Utility.ConfigUtil.Serialization.Serializations;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * An object representing a node as a part of a tree which represents a Function
  */
-public class FunctionTree implements Serializable {
+public class FunctionTree implements Serializable,Cloneable {
 
     /**
      * The current object
@@ -50,7 +49,8 @@ public class FunctionTree implements Serializable {
             Object[] values = new Object[action.getReceivedTypes().length];
             for(int i = 0 ; i < action.getReceivedTypes().length; i++)
                 values[i] = executeFunction(func.getNext()[i],executor,item);
-            return  action.action(values);
+            if(action.checkParameters(values))
+                return  action.action(values);
 
         }
 
@@ -67,6 +67,8 @@ public class FunctionTree implements Serializable {
             Object[] values = new Object[param.getReceivedTypes().length];
             for(int i = 0 ; i < param.getReceivedTypes().length; i++)
                 values[i] = executeFunction(func.getNext()[i],executor,item);
+
+            if(param.checkParameters(values))
             return param.getParameter(values);
         }
 
@@ -178,9 +180,17 @@ public class FunctionTree implements Serializable {
         for (FunctionTree functionTree : tree.getNext())
                 values.add(serialize(functionTree));
 
-        if(tree.getCurrent() instanceof TruePrimitive)
-            map.put("Value",((TruePrimitive) tree.getCurrent()).getValue());
-        else map.put("Values",values.isEmpty() ? null : values);
+        if(tree.getCurrent() instanceof TruePrimitive) {
+            TruePrimitive prim = ((TruePrimitive) tree.getCurrent());
+            map.put("Value", Serializations.serialize(prim.getValue()));
+            map.put("Class",prim.getReturnType().getName());
+        }        else map.put("Values",values.isEmpty() ? null : values);
+
+        if(tree.getCurrent() instanceof EventInstance) {
+            map.put("Cancelled", ((EventInstance) tree.getCurrent()).isCancelled());
+            map.put("Event", ((EventInstance) tree.getCurrent()).getKey());
+        }
+
         return map;
 
     }
@@ -192,22 +202,26 @@ public class FunctionTree implements Serializable {
      * @return the map deserialized
      * @throws CloneNotSupportedException
      */
-    public static FunctionTree deserialize(FunctionTree prev ,Map<String,Object> map) throws CloneNotSupportedException {
+    public static FunctionTree deserialize(FunctionTree prev ,Map<String,Object> map,String creation) throws CloneNotSupportedException, ClassNotFoundException {
         if(map == null)
             return null;
-        FunctionTree tree = new FunctionTree(NodesHandler.INSTANCE.getNodeByName((String) map.get("Name")),null,prev);
 
-        if(tree.getCurrent() instanceof TruePrimitive)
-            ((TruePrimitive) tree.getCurrent()).setValue(map.get("Value"));
-        else {
+        FunctionTree tree = new FunctionTree(NodesHandler.INSTANCE.getNodeByName((String) map.get("Name")),null,prev);
+        if(tree.getCurrent() instanceof EventInstance)
+            tree.setCurrent(new EventInstance((IEvent) NodesHandler.INSTANCE.getNodeByName((String) map.get("Event")), (Boolean) map.get("Cancelled"),creation));
+
+        if(tree.getCurrent() instanceof TruePrimitive) {
+            ((TruePrimitive) tree.getCurrent()).setValue(Serializations.deserialize((byte[]) map.get("Value"), Class.forName((String) map.get("Class"))));
+        } else {
             List<Map<String,Object>> list = (List) map.get("Values");
             if(list == null || list.size() == 0)
                 return tree;
             FunctionTree[] next = new FunctionTree[list.size()];
             for (int i = 0; i < list.size(); i++)
-                next[i] = deserialize(tree,list.get(i));
+                next[i] = deserialize(tree,list.get(i),creation);
             tree.setNext(next);
         }
+
 
         return tree;
 
@@ -219,8 +233,13 @@ public class FunctionTree implements Serializable {
      * @param map a given map
      */
     private void putDefaultTreeValues(FunctionTree tree, Map<String,Object> map){
-        if(tree != null && map != null && tree.getCurrent() != null)
-            map.put("Name",((INode) tree.getCurrent()).getKey());
+        if(tree != null && map != null && tree.getCurrent() != null) {
+            map.put("Name", ((INode) tree.getCurrent()).getKey());
+            //Unique cases
+            if(tree.getCurrent() instanceof EventInstance)
+                map.put("Name","EVENT_INSTANCE");
+        }
+
 
     }
 
@@ -238,7 +257,7 @@ public class FunctionTree implements Serializable {
         String str = "";
         String key;
         if(tree == null || tree.getCurrent() == null)
-            key = "null";
+            return "null";
         else key = ((INode)tree.getCurrent()).getKey();
 
         str+="- "+key+": \n";
@@ -246,7 +265,8 @@ public class FunctionTree implements Serializable {
             str+="Next: \n";
             for (FunctionTree functionTree : tree.getNext())
                 str += toString(functionTree);
-        }
+        }else if(tree.getCurrent() instanceof TruePrimitive)
+                str+="Value: "+((TruePrimitive) tree.getCurrent()).getValue();
 
         return str;
     }
@@ -267,18 +287,17 @@ public class FunctionTree implements Serializable {
     private static boolean isValid(FunctionTree tree){
         //validation need to be two sided since the function cant tell which is the first tree
         Object curr = tree.getCurrent();
-
         if(curr == null)
             return false;
         if(!(curr instanceof INode))
             return false;
+
         if(curr instanceof IEvent){
             if(tree.getPrev() != null) // previous should always be null for events
                 return false;
             if(tree.getNext() != null && tree.getNext().length != 0)
-                if(Arrays.stream(tree.getNext()).anyMatch(x -> x== null)) {
+                if(Arrays.stream(tree.getNext()).anyMatch(x -> x== null))
                     return false;
-                }
                 else for (FunctionTree functionTree : tree.getNext())
                         if(!isValid(functionTree))
                             return false;
@@ -302,5 +321,41 @@ public class FunctionTree implements Serializable {
                 return false;
 
         return true;
+    }
+
+    @Override
+    public FunctionTree clone() {
+        FunctionTree tree = clone(this);
+        return tree;
+    }
+
+    /**
+     *
+     * @param tree a given tree
+     * @return the given tree, cloned (includes next nodes)
+     */
+    private FunctionTree clone(FunctionTree tree){
+        if(tree == null)
+            return null;
+        Object current = tree.getCurrent();
+        if(current != null)
+            if(tree.getCurrent() instanceof EventInstance)
+                current = ((EventInstance) tree.getCurrent()).clone();
+            else if(tree.getCurrent() instanceof  TruePrimitive) {
+                TruePrimitive prim = (TruePrimitive)tree.getCurrent();
+                        current = prim.clone();
+                ((TruePrimitive) current).setValue(prim.getValue());
+            }
+
+        FunctionTree newTree = new FunctionTree(current,null,prev);
+
+        if(tree.getNext() == null)
+            return newTree;
+
+        FunctionTree[] next = new FunctionTree[tree.getNext().length];
+        for (int i = 0; i < tree.getNext().length; i++)
+            next[i] = clone(tree.getNext()[i]);
+        newTree.setNext(next);
+        return newTree;
     }
 }

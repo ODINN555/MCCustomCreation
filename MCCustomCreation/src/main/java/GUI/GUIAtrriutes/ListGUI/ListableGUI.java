@@ -4,7 +4,6 @@ import GUI.GUIAtrriutes.PageableGUI;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,31 +27,54 @@ public class ListableGUI extends PageableGUI implements IGUIList {
     private int prefix;
 
     /**
+     * The gui's top rows prefix
+     */
+    private int topPrefix;
+
+    /**
+     * the gui's bottom rows prefix
+     */
+    private int bottomPrefix;
+
+    /**
      *
      * @param list a given item list
      * @param name a given name
      * @param amountInRow a given amount in a row
      * @param prefix a given prefix
      */
-    public ListableGUI(List<ItemStack> list,String name,int amountInRow,int prefix) {
-        super(name,getMaxPageCountNeeded(list,amountInRow), getNextPageSlot(list,amountInRow), getPrevPageSlot(list,amountInRow));
+    public ListableGUI(List<ItemStack> list,String name,int amountInRow,int prefix,int topPrefix,int bottomPrefix) {
+        super(name,getMaxPageCountNeeded(list,amountInRow,topPrefix,bottomPrefix), getNextPageSlot(list,amountInRow), getPrevPageSlot(list,amountInRow));
         this.itemsList = list;
         this.prefix = prefix;
         this.amountInRow = amountInRow;
+        this.topPrefix = topPrefix;
+        this.bottomPrefix = bottomPrefix;
+        if(topPrefix < 0)
+            throw new IllegalArgumentException("Top prefix cannot be negative.");
+        if(bottomPrefix < 0)
+            throw new IllegalArgumentException("Bottom prefix cannot be negative.");
+        if(bottomPrefix + topPrefix >= 6)
+            throw new IllegalArgumentException("The sum of top and bottom prefixes cannot be equal or greater than max inventory rows.");
     }
 
-    /**
-     *
-     * @param list a given list
-     * @param amountInRow a given amount of items which can be at each row
-     * @return the max page count needed for this GUI
-     */
-    private static final int getMaxPageCountNeeded(List list,int amountInRow){
+    public ListableGUI(List<ItemStack> list,String name,int amountInRow,int prefix) {
+    this(list,name,amountInRow,prefix,0,0);
+    }
+
+        /**
+         *
+         * @param list a given list
+         * @param amountInRow a given amount of items which can be at each row
+         * @return the max page count needed for this GUI
+         */
+    private static final int getMaxPageCountNeeded(List list,int amountInRow,int topPrefix,int bottomPrefix){
         if(list == null)
             return 1;
         int listSize = list.size();
         int size = 9 + (listSize / amountInRow) * 9 ;
-        return 1 + size / 54;
+
+        return size == 54 ? 1 : 1 + size / ((6- topPrefix - bottomPrefix) * 9);
     }
 
     /**
@@ -89,26 +111,36 @@ public class ListableGUI extends PageableGUI implements IGUIList {
          */
     public ListableGUI(List<ItemStack> list,String name){
         this(list,name,7,0);
+
+
     }
 
     @Override
     protected Inventory initInventory() {
-        Inventory inv = getGUIList(null, getTitle(),getItemsList(),getAmountInRow(),getPrefix());
+        Inventory inv = getGUIList(null, getTitle(),getItemsList(),getAmountInRow(),getPrefix(),getTopPrefix(),getBottomPrefix());
         return inv;
     }
 
 
     @Override
     protected void onPageChange(int from, int to) {
+
+
         if(to > maxPageCount)
             to = maxPageCount;
-        int amountPerPage = 42 -1; // index starts from 0 so 41 items in a page is 42
-        List<ItemStack> nextList;
-        if(to == maxPageCount)
-            nextList = itemsList.subList(amountPerPage * from , itemsList.size() -1);
-        else nextList = from < to ? itemsList.subList(amountPerPage * from, amountPerPage * to) : itemsList.subList(amountPerPage * to, amountPerPage * from);
 
-        getGUIList(nextList,getInventory(),getAmountInRow(),getPrefix());
+        if(from == to)
+            return;
+
+        int amountPerPage = 42; // index starts from 0 so 41 items in a page is 42
+        List<ItemStack> nextList;
+
+        if(to == maxPageCount)
+            nextList = itemsList.subList(amountPerPage * from , itemsList.size() );
+        else nextList = from < to ? itemsList.subList(amountPerPage * from -1 , amountPerPage * to -1) : itemsList.subList( amountPerPage * (to-1), amountPerPage * to );
+
+        getGUIList(nextList,getInventory(),getAmountInRow(),getPrefix(),getTopPrefix(),getBottomPrefix());
+
         updateInventory();
     }
 
@@ -124,9 +156,17 @@ public class ListableGUI extends PageableGUI implements IGUIList {
         return prefix;
     }
 
+    public int getTopPrefix() {
+        return topPrefix;
+    }
+
+    public int getBottomPrefix() {
+        return bottomPrefix;
+    }
+
     @Override
     protected void onOpening() {
         super.onOpening();
-        getGUIList(getItemsList(),getInventory(),getAmountInRow(),getPrefix());
+        getGUIList(getItemsList(),getInventory(),getAmountInRow(),getPrefix(),getTopPrefix(),getBottomPrefix());
     }
 }
