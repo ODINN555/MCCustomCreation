@@ -89,11 +89,11 @@ You can name the creation however you want, in this tutorial we will be calling 
  A location is a data type which contains several things: x cords, y cords, z cords, World, vertical rotation (pitch) and horizontal rotation (yaw).\
  so setting the direction of the Location is like setting it's pitch and yaw.\
  So we first chose to set a location direction. The direction vector we gave to the Set Location Direction parameter was the player's location direction, which is, the direction which the player is looking.\
- The location we set the direction to was the location of the targeted block 4 ahead of the player.\
+ The location we set the direction to was the location of the targeted block 4 ahead of the player.
  
  **You may ask, why setting the direction?**\
  Since we are using the location of the targeted block ahead to the player, it does not consider the direction of the player eyes.\
- Then why using the targeted block? if we were to just teleport the player 4 blocks ahead, he could go through walls.\
+ Then why using the targeted block? if we were to just teleport the player 4 blocks ahead, he could go through walls.
  
  Now, whenever you hold an item and you use the Create command for AOTC, it will apply the Creation weve made to the item! You can now right click the air and teleport 4 blocks ahead!
  
