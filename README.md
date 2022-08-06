@@ -12,11 +12,11 @@ The plugin uses GUIs and components named "Nodes" that the player can combine to
   This plugin requires ProtocolLib, so download it and put it in the server's plugins folder as well.
 
 # Commands
- * /MCCustomCreation Help - shows the list of commands and their detailed description.
- * /MCCustomCreation Create - creates a new Creation.
- * /MCCustomCreation Remove - deletes a Creation.
- * /MCCustomCreation Duplicate - creates a new creation with the abilities of the duplicated creation.
- * /MCCustomCreation test - for tests purpuses (BETA), not in use in general.
+ * /CustomCreation Help - shows the list of commands and their detailed description.
+ * /CustomCreation Create - creates a new Creation.
+ * /CustomCreation Remove - deletes a Creation.
+ * /CustomCreation Duplicate - creates a new creation with the abilities of the duplicated creation.
+ * /CustomCreation test - for tests purpuses (BETA), not in use in general.
 
 # What is a Creation?
  A Creation represents a set of abilities that can be attached to an item. 
