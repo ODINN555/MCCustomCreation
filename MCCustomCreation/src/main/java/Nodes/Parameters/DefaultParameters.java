@@ -979,7 +979,7 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((LivingEntity) objects[0]).getTargetBlock(null, (Integer) objects[1]);
         }
     },
-    GET_LOCATION_PITCH("The location's pitch, pitch is the horizontal rotation value.", null, "GET_LOCATION_PITCH", Float.class, new Class[]{Location.class}, new String[]{""}) {
+    GET_LOCATION_PITCH("The location's pitch, pitch is the vertical rotation value.", null, "GET_LOCATION_PITCH", Float.class, new Class[]{Location.class}, new String[]{""}) {
         @Override
         public Object getParameter(Object... objects) {
             return ((Location) objects[0]).getPitch();
@@ -991,7 +991,7 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((Location) objects[0]).getX();
         }
     },
-    GET_LOCATION_YAW("The location's yaw, yaw is the vertical rotation value.", null, "GET_LOCATION_YAW", Float.class, new Class[]{Location.class}, new String[]{""}) {
+    GET_LOCATION_YAW("The location's yaw, yaw is the horizontal rotation value.", null, "GET_LOCATION_YAW", Float.class, new Class[]{Location.class}, new String[]{""}) {
         @Override
         public Object getParameter(Object... objects) {
             return ((Location) objects[0]).getYaw();
@@ -1373,7 +1373,7 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return loc;
         }
     },
-    SET_LOCATION_PITCH("Set the location's pitch, pitch is the horizontal rotation.", Material.CYAN_STAINED_GLASS_PANE, "SET_LOCATION_PITCH", Location.class, new Class[]{Location.class, Float.class}, new String[]{"", "The pitch"}) {
+    SET_LOCATION_PITCH("Set the location's pitch, pitch is the vertical rotation.", Material.CYAN_STAINED_GLASS_PANE, "SET_LOCATION_PITCH", Location.class, new Class[]{Location.class, Float.class}, new String[]{"", "The pitch"}) {
         @Override
         public Object getParameter(Object... objects) {
             Location loc = ((Location) objects[0]);
@@ -1397,7 +1397,7 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return loc;
         }
     },
-    SET_LOCATION_YAW("Set the location's yaw, yaw is the vertical rotation.", Material.CYAN_STAINED_GLASS_PANE, "SET_LOCATION_YAW", Location.class, new Class[]{Location.class, Float.class}, new String[]{"", "The yaw"}) {
+    SET_LOCATION_YAW("Set the location's yaw, yaw is the horizontal rotation.", Material.CYAN_STAINED_GLASS_PANE, "SET_LOCATION_YAW", Location.class, new Class[]{Location.class, Float.class}, new String[]{"", "The yaw"}) {
         @Override
         public Object getParameter(Object... objects) {
             Location loc = ((Location) objects[0]);

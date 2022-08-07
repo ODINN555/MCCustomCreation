@@ -31,6 +31,7 @@ public class TPri_String extends SignInputtedPrimitive {
             Logging.log("You must enter a String! (a String is anything that is placed under two quotes. like 'hello' for example. it could be number,sentence,letter. anything.)", LoggingOptions.ERROR);
         else for (int i = 0; i < lines.length; i++)
             str+=lines[i] == null ? "" : " "+lines[i];
+
         str = ChatColor.translateAlternateColorCodes('&',str);
         setValue(str);
         super.gui.prev();
