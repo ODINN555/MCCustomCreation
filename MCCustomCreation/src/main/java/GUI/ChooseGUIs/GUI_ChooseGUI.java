@@ -37,11 +37,11 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
         this(Stream.concat( // make 1 big list out of all primitives and parameters which their return type matches the given one
                 NodesHandler.INSTANCE.getPrimitiveMap().values()
                         .stream()
-                        .filter(p -> returnType.isAssignableFrom(p.getReturnType()))
+                        .filter(p -> returnType.isAssignableFrom(p.getReturnType()) || p.getReturnType().equals(Object.class))
 
                 ,NodesHandler.INSTANCE.getParameterMap().values()
                         .stream()
-                        .filter(p -> returnType.isAssignableFrom(p.getReturnType())))
+                        .filter(p -> returnType.isAssignableFrom(p.getReturnType()) || p.getReturnType().equals(Object.class)))
                             .collect(Collectors.toList())
                 ,currentTree,"Choose A "+returnType.getSimpleName());
 

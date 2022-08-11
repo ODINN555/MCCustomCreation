@@ -3,6 +3,8 @@ package Nodes.Parameters;
 import Nodes.IParameter;
 import Nodes.NodeEnum;
 import Nodes.NodeItemStack;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import com.google.common.collect.Multimap;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -20,7 +22,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
-
+import Utility.PDCUtil;
 import java.util.List;
 import java.util.UUID;
 
@@ -1036,6 +1038,22 @@ public enum DefaultParameters implements IParameter, NodeEnum {
         public Object getParameter(Object... objects) {
 
             return objects[0].toString();
+        }
+    },
+    GET_PERSISTENT_DATA_FROM_LIVING_ENTITY("The data stored inside an entity.", Material.PURPLE_STAINED_GLASS_PANE, "GET_PERSISTENT_DATA_FROM_LIVING_ENTITY", Object.class, new Class[]{LivingEntity.class,String.class}, new String[]{"The entity to get the data from","The key to get the data from"}) {
+        @Override
+        public Object getParameter(Object... objects) {
+
+            return PDCUtil.get((LivingEntity) objects[0],(String) objects[1]);
+        }
+    },
+    GET_PERSISTENT_DATA_FROM_ITEM("The data stored inside an item.", Material.PURPLE_STAINED_GLASS_PANE, "GET_PERSISTENT_DATA_FROM_ITEM", Object.class, new Class[]{ItemStack.class,String.class}, new String[]{"The item to get the data from","The key to get the data from"}) {
+        @Override
+        public Object getParameter(Object... objects) {
+            Logging.log("key "+objects[1], LoggingOptions.TEST);
+            String key = (String) objects[1];
+            ChatColor.stripColor(key);
+            return PDCUtil.get((ItemStack) objects[0],key);
         }
     },
     GET_PLAYER_ATTACK_COOLDOWN("The attack cooldown for a crit attack.", null, "GET_PLAYER_ATTACK_COOLDOWN", Float.class, new Class[]{Player.class}, new String[]{""}) {

@@ -13,6 +13,8 @@ import Nodes.Primitives.TruePrimitives.*;
 import Utility.ConfigUtil.ConfigHandler;
 import Utility.ConfigUtil.NodeSavingManagers.FileManagersSelection;
 import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.command.Command;
@@ -51,6 +53,7 @@ public class Main extends JavaPlugin {
         initConfigManagers();
         registerCommands();
         initProtocols();
+        Logging.log("protocl manager: "+getProtocolsManager(), LoggingOptions.TEST);
     }
 
     @Override
@@ -140,7 +143,7 @@ public class Main extends JavaPlugin {
 
     /**
      *
-     * @return the plugin's protocls manager
+     * @return the plugin's protocols manager
      */
     public static ProtocolManager getProtocolsManager(){
         return ProtocolsManager;
