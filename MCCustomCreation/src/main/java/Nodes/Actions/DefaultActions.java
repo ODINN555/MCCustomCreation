@@ -7,6 +7,7 @@ import Nodes.NodeItemStack;
 import Utility.ItemStackUtil;
 import Utility.Logging.Logging;
 import Utility.Logging.LoggingOptions;
+import Utility.PDCUtil;
 import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
@@ -240,7 +241,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
-    MAKE_LIVING_ENTITY_ATTACK_ENTITY("Make an entity melee attack another enttiy.", Material.GOLDEN_SWORD, "MAKE_LIVING_ENTITY_ATTACK_ENTITY", new Class[]{LivingEntity.class, Entity.class}, new String[]{"The attacker", "The entity to attack"}) {
+    MAKE_LIVING_ENTITY_ATTACK_ENTITY("Make an entity melee attack another ENTITY.", Material.GOLDEN_SWORD, "MAKE_LIVING_ENTITY_ATTACK_ENTITY", new Class[]{LivingEntity.class, Entity.class}, new String[]{"The attacker", "The entity to attack"}) {
         @Override
         public boolean action(Object... params) {
             ((LivingEntity) params[0]).attack((Entity) params[1]);
@@ -383,6 +384,20 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
+    REMOVE_PERSISTENT_DATA_FROM_ITEM("Removes data stored inside an item", Material.PAPER, "REMOVE_PERSISTENT_DATA_FROM_ITEM", new Class[]{ItemStack.class, String.class}, new String[]{"", "The key to remove the value from"}) {
+        @Override
+        public boolean action(Object... params) {
+            PDCUtil.remove((ItemStack) params[0], (String) params[1]);
+            return true;
+        }
+    },
+    REMOVE_PERSISTENT_DATA_FROM_LIVING_ENTITY("Removes data stored inside an entity", Material.PAPER, "REMOVE_PERSISTENT_DATA_FROM_LIVING_ENTITY", new Class[]{LivingEntity.class, String.class}, new String[]{"", "The key to remove the value from"}) {
+        @Override
+        public boolean action(Object... params) {
+            PDCUtil.remove((LivingEntity) params[0], (String) params[1]);
+            return true;
+        }
+    },
     REMOVE_POTION_EFFECT_FROM_LIVING_ENTITY("", Material.POTION, "REMOVE_POTION_EFFECT_FROM_LIVING_ENTITY", new Class[]{LivingEntity.class, PotionEffectType.class}, new String[]{"", "The type"}) {
         @Override
         public boolean action(Object... params) {
@@ -485,6 +500,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
+
     SET_ENTITY_ABSORPTION_AMOUNT("Set the amount of absorption an entity has.", Material.GOLDEN_APPLE, "SET_ENTITY_ABSORPTION_AMOUNT", new Class[]{LivingEntity.class, Double.class}, new String[]{"", "Absorption amount"}) {
         @Override
         public boolean action(Object... params) {
@@ -777,6 +793,20 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
+    SET_PERSISTENT_DATA_TO_ITEM("Sets data inside an item, this data will be saved after restart.", Material.PAPER, "SET_PERSISTENT_DATA_TO_ITEM", new Class[]{ItemStack.class, String.class, Object.class}, new String[]{"", "The key to set the value to", "The value"}) {
+        @Override
+        public boolean action(Object... params) {
+            PDCUtil.set((ItemStack) params[0], (String) params[1], params[2]);
+            return true;
+        }
+    },
+    SET_PERSISTENT_DATA_TO_LIVING_ENTITY("Sets data inside an entity, this data will be saved after restart.", Material.PAPER, "SET_PERSISTENT_DATA_TO_LIVING_ENTITY", new Class[]{LivingEntity.class, String.class, Object.class}, new String[]{"", "The key to set the value to", "The value"}) {
+        @Override
+        public boolean action(Object... params) {
+            PDCUtil.set((LivingEntity) params[0], (String) params[1], params[2]);
+            return true;
+        }
+    },
     SET_PLAYER_ALLOWED_TO_FLY("Set if a player is allowed to fly.", Material.ELYTRA, "SET_PLAYER_ALLOWED_TO_FLY", new Class[]{Player.class, Boolean.class}, new String[]{"", ""}) {
         @Override
         public boolean action(Object... params) {
@@ -1023,6 +1053,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
+
     SET_WORLD_HARDCORE("Set if the world hardcore mode activated.", Material.NETHERITE_CHESTPLATE, "SET_WORLD_HARDCORE", new Class[]{World.class, Boolean.class}, new String[]{"", ""}) {
         @Override
         public boolean action(Object... params) {
@@ -1052,7 +1083,6 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
-
     SET_WORLD_TICKS_PER_SPAWNS_OF_CATEGORY("Set the cooldown per spawn of a spawn category (this means that if the value is 10, then it will spawn from the spawn category each 10 ticks).", Material.SPAWNER, "SET_WORLD_TICKS_PER_SPAWNS_OF_CATEGORY", new Class[]{World.class, SpawnCategory.class, Integer.class}, new String[]{"", "", "Cooldown in ticks"}) {
         @Override
         public boolean action(Object... params) {
@@ -1151,6 +1181,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
+
     SWING_LIVING_ENTITY_OFF_HAND("Swing an entity's off hand.", Material.IRON_PICKAXE, "SWING_LIVING_ENTITY_OFF_HAND", new Class[]{LivingEntity.class}, new String[]{""}) {
         @Override
         public boolean action(Object... params) {
@@ -1165,6 +1196,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
+
     UNLOAD_CHUNK("", Material.SLIME_BLOCK, "UNLOAD_CHUNK", new Class[]{Location.class}, new String[]{""}) {
         @Override
         public boolean action(Object... params) {
@@ -1220,7 +1252,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
      * @param receivedTypes the node's received types
      * @param receivedTypesDescriptions the node's received types descriptions
      */
-    DefaultActions(String description,  Material mat, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
+    DefaultActions(String description, Material mat, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
         this.description = description;
         this.mat = mat;
         this.key = key;
@@ -1237,7 +1269,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
      * @param receivedTypes the node's received types
      * @param receivedTypesDescriptions the node's received types descriptions
      */
-    DefaultActions(String description,  ItemStack item, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
+    DefaultActions(String description, ItemStack item, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
         this.description = description;
         this.mat = item.getType();
         this.item = item;

@@ -1,6 +1,10 @@
 package me.ODINN.MCCustomCreation;
 
+import PluginEvents.ApplyCreationEvent;
+import PluginEvents.RemoveCreationEvent;
 import Utility.PDCUtil;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 /**
@@ -39,7 +43,18 @@ public class CreationsUtil {
      * @param creation a given creation name
      */
     public static void setCreationIntoItem(ItemStack item,String creation){
-        PDCUtil.set(item,CREATIONS_PDC_KEY,creation);
+        if(item == null || item.getType().equals(Material.AIR))
+            return;
+
+        ApplyCreationEvent event = new ApplyCreationEvent(creation,item);
+        Bukkit.getPluginManager().callEvent(event);
+
+        if(event.isCancelled())
+            return;
+
+        ItemStack endItem = event.getItem();
+        String endCreation = event.getCreation();
+        PDCUtil.set(endItem,CREATIONS_PDC_KEY,endCreation);
     }
 
     /**
@@ -47,7 +62,16 @@ public class CreationsUtil {
      * @param item a given item
      */
     public static void removeCreationFromItem(ItemStack item){
-        PDCUtil.remove(item,CREATIONS_PDC_KEY);
+        if(!PDCUtil.has(item,CREATIONS_PDC_KEY))
+            return;
+
+        RemoveCreationEvent event = new RemoveCreationEvent(PDCUtil.get(item,CREATIONS_PDC_KEY),item);
+
+        if(event.isCancelled())
+            return;
+
+        ItemStack endItem = event.getItem();
+        PDCUtil.remove(endItem,CREATIONS_PDC_KEY);
     }
 
 }

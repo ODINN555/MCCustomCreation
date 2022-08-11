@@ -35,6 +35,7 @@
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
+            <scope>provided</scope>
             <version>4.8.0</version>
         </dependency>
 

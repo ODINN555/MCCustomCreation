@@ -23,6 +23,7 @@ public class PDCUtil {
     public static boolean has(PersistentDataContainer container,String key){
         if(container == null)
             return false;
+        key =validateKey(key);
         return container.has(new NamespacedKey(Main.getInstance(),key),new StoredData());
     }
 
@@ -58,6 +59,7 @@ public class PDCUtil {
      * @return the value of the given container with the given key with the given class of return type
      */
     public static <T> T get(PersistentDataContainer container,String key ){
+        key =validateKey(key);
         if(has(container,key))
             return (T) Serializations.deserialize(container.get(new NamespacedKey(Main.getInstance(),key),new StoredData()));
         return null;
@@ -99,6 +101,7 @@ public class PDCUtil {
     public static <T> void set(PersistentDataContainer container,String key ,T value){
         if(container == null)
             return;
+        key =validateKey(key);
         container.set(new NamespacedKey(Main.getInstance(),key),new StoredData(),Serializations.serialize(value));
     }
 
@@ -138,6 +141,7 @@ public class PDCUtil {
     public static void remove(PersistentDataContainer container ,String key){
         if(container == null)
             return;
+        key =validateKey(key);
         container.remove(new NamespacedKey(Main.getInstance(),key));
     }
 
@@ -165,4 +169,7 @@ public class PDCUtil {
         container.setItemMeta(meta);
     }
 
+    public static String validateKey(String key){
+        return key.replaceAll(" ","_");
+    }
 }

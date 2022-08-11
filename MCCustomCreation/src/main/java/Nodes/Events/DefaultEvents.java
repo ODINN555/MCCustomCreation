@@ -2,6 +2,8 @@ package Nodes.Events;
 
 import Nodes.NodeEnum;
 import Nodes.NodeItemStack;
+import PluginEvents.ApplyCreationEvent;
+import PluginEvents.RemoveCreationEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
@@ -280,7 +282,24 @@ public enum DefaultEvents implements Serializable, IEvent, NodeEnum {
             if (item != null && !item.getType().equals(Material.AIR))
                 executeEvent(item, event.getPlayer(), event);
         }
-    };
+    },
+    APPLY_CREATION("When a creation is being applied to an item.", "APPLY_CREATION_EVENT", null) {
+        @EventHandler
+        public void onApplyCreation(ApplyCreationEvent event) {
+            ItemStack item = event.getItem();
+            if (item != null && !item.getType().equals(Material.AIR))
+                executeEvent(item, null, event);
+        }
+    },
+    REMOVE_CREATION("When a creation is being removed from an item.", "REMOVE_CREATION_EVENT", null) {
+        @EventHandler
+        public void onApplyCreation(RemoveCreationEvent event) {
+            ItemStack item = event.getItem();
+            if (item != null && !item.getType().equals(Material.AIR))
+                executeEvent(item, null, event);
+        }
+    },
+    ;
 
     /**
      * The event's key
