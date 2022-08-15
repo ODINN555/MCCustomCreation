@@ -452,8 +452,6 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
         @Override
         public boolean action(Object... params) {
             Location loc = (Location) params[0];
-            Logging.log("biome: " + params[1], LoggingOptions.TEST);
-            Logging.log("loc: " + loc.toVector(), LoggingOptions.TEST);
             loc.getWorld().setBiome(loc, (Biome) params[1]);
             return true;
         }

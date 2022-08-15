@@ -2,10 +2,14 @@ package Nodes;
 
 import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
+import Utility.ConfigUtil.ConfigHandler;
+
 import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.Bukkit;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,6 +67,10 @@ public class NodesHandler {
      * @param obj a given node
      */
     public void register(INode obj){
+        List<String> blacklist = (List<String>) ConfigHandler.INSTANCE.getSetting(ConfigHandler.Settings.NodeBlackList);
+        if(blacklist != null && blacklist.contains(obj.getKey()))
+            return;
+
         if(obj instanceof IAction)
             putInMap(actionMap,(IAction) obj);
         else if(obj instanceof IParameter)

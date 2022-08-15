@@ -1050,7 +1050,6 @@ public enum DefaultParameters implements IParameter, NodeEnum {
     GET_PERSISTENT_DATA_FROM_ITEM("The data stored inside an item.", Material.PURPLE_STAINED_GLASS_PANE, "GET_PERSISTENT_DATA_FROM_ITEM", Object.class, new Class[]{ItemStack.class,String.class}, new String[]{"The item to get the data from","The key to get the data from"}) {
         @Override
         public Object getParameter(Object... objects) {
-            Logging.log("key "+objects[1], LoggingOptions.TEST);
             String key = (String) objects[1];
             ChatColor.stripColor(key);
             return PDCUtil.get((ItemStack) objects[0],key);

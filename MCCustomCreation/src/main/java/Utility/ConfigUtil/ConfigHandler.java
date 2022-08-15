@@ -43,13 +43,18 @@ public class ConfigHandler extends YmlManager{
         public static final Setting MessageLogging = new Setting("MessageLogging",true);
 
         /**
+         * NodeBlackList - String Array, which nodes to not use.
+         */
+        public static final Setting NodeBlackList = new Setting("NodeBlacklist",new String[0]);
+        /**
          *
          * @return all the settings
          */
         public static List<Setting> getAllSettings(){
             return Arrays.asList(
                     FileManagerType,
-                    MessageLogging
+                    MessageLogging,
+                    NodeBlackList
             );
         }
     }

@@ -53,7 +53,6 @@ public class Main extends JavaPlugin {
         initConfigManagers();
         registerCommands();
         initProtocols();
-        Logging.log("protocl manager: "+getProtocolsManager(), LoggingOptions.TEST);
     }
 
     @Override
