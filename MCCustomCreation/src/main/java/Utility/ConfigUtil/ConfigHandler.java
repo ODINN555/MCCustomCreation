@@ -2,6 +2,7 @@ package Utility.ConfigUtil;
 
 import me.ODINN.MCCustomCreation.Main;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,8 +24,7 @@ public class ConfigHandler extends YmlManager{
         super(Main.getInstance(),FILE_NAME);
         for (Setting setting : Settings.getAllSettings())
             if(get(new String[]{SETTINGS_KEY,setting.Name}) == null)
-                set(new String[]{SETTINGS_KEY,setting.Name},setting.DefaultValue);
-
+                set(new String[]{SETTINGS_KEY, setting.Name}, setting.DefaultValue);
 
     }
 
@@ -45,7 +45,7 @@ public class ConfigHandler extends YmlManager{
         /**
          * NodeBlackList - String Array, which nodes to not use.
          */
-        public static final Setting NodeBlackList = new Setting("NodeBlacklist",new String[0]);
+        public static final Setting NodeBlackList = new Setting("NodeBlacklist",new ArrayList<>());
         /**
          *
          * @return all the settings

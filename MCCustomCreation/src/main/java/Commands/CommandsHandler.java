@@ -3,6 +3,7 @@ package Commands;
 import Utility.Logging.Logging;
 import Utility.Logging.LoggingOptions;
 import Utility.Logging.Messages;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -102,6 +103,8 @@ public class CommandsHandler {
             String subCmd = args[0];
             if (subCmd == null || subCmd.equalsIgnoreCase(" "))
                 return true;
+
+            subCmd = ChatColor.stripColor(subCmd);
 
             if (isCommandExists(subCmd)) {
                 CustomCommand cmd = getCommand(subCmd);

@@ -13,8 +13,6 @@ import Nodes.Primitives.TruePrimitives.*;
 import Utility.ConfigUtil.ConfigHandler;
 import Utility.ConfigUtil.NodeSavingManagers.FileManagersSelection;
 import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
-import Utility.Logging.Logging;
-import Utility.Logging.LoggingOptions;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import org.bukkit.command.Command;
@@ -49,10 +47,11 @@ public class Main extends JavaPlugin {
     public void onEnable(){
         INSTANCE = this;
         Thread.currentThread().setContextClassLoader(this.getClassLoader());
-        registerDefaults();
         initConfigManagers();
         registerCommands();
         initProtocols();
+        registerDefaults();
+
     }
 
     @Override

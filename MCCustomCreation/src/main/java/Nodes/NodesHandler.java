@@ -3,11 +3,9 @@ package Nodes;
 import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
 import Utility.ConfigUtil.ConfigHandler;
-
 import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.Bukkit;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
