@@ -175,4 +175,22 @@ public class NodesHandler {
            return ((TruePrimitive) node).clone();
         return  node;
     }
+
+    public Map<String,INode> getAllNodes(){
+        Map<String,INode> nodes = new HashMap<>();
+        nodes.putAll(getEvents());
+        nodes.putAll(getParameterMap());
+        nodes.putAll(getPrimitiveMap());
+        nodes.putAll(getActionMap());
+        return nodes;
+    }
+
+    public <T extends INode> Map<String,T> getNodesByType(Class<T> type){
+        Map<String,T> filtered = new HashMap<>();
+        getAllNodes().forEach((key,node) -> {
+            if (type.isAssignableFrom(node.getClass()))
+                filtered.put(key,(T) node);
+        });
+        return filtered;
+    }
 }

@@ -14,7 +14,7 @@ public abstract class SignInputtedPrimitive extends TruePrimitive {
     /**
      * the primitive's chooser gui
      */
-    protected GUI_ChooseGUI gui;
+    protected transient GUI_ChooseGUI gui;
 
     @Override
     public void onChosen(GUI_ChooseGUI gui) {

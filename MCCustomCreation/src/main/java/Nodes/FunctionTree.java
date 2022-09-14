@@ -62,6 +62,9 @@ public class FunctionTree implements Serializable,Cloneable {
         }
 
 
+        if(func.getCurrent() instanceof IGenericNode)
+            return ((IGenericNode) func.getCurrent()).onGenericExecution(func,executor,item);
+
         if(func.getCurrent() instanceof IParameter){
             IParameter param = (IParameter) func.getCurrent();
             Object[] values = new Object[param.getReceivedTypes().length];

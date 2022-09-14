@@ -3,6 +3,8 @@ package me.ODINN.MCCustomCreation;
 import Commands.*;
 import Nodes.Actions.DefaultActions;
 import Nodes.Events.DefaultEvents;
+import Nodes.GenericNodes.List.GP_GetItemFromListByIndex;
+import Nodes.GenericNodes.List.GTPri_List;
 import Nodes.NodeEnum;
 import Nodes.NodesHandler;
 import Nodes.Parameters.DefaultParameters;
@@ -94,8 +96,9 @@ public class Main extends JavaPlugin {
                 new TPri_String(),
                 new TPri_Float(),
                 new TPri_Double(),
-                new TPri_Byte()
-
+                new TPri_Byte(),
+                new GTPri_List(),
+                new GP_GetItemFromListByIndex()
         );
     }
 

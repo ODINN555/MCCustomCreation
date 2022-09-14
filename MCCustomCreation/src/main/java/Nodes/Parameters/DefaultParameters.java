@@ -48,11 +48,11 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((Location) objects[0]).toVector();
         }
     },
-    GET_ALL_PLAYERS_IN_WORLD("The world's player list.", null, "GET_ALL_PLAYERS_IN_WORLD", List.class, new Class[]{World.class}, new String[]{""}) {
+    GET_ALL_PLAYERS_IN_WORLD("The world's player list.", null, "GET_ALL_PLAYERS_IN_WORLD", Player[].class, new Class[]{World.class}, new String[]{""}) {
         @Override
         public Object getParameter(Object... objects) {
 
-            return ((World) objects[0]).getPlayers();
+            return ((World) objects[0]).getPlayers().toArray();
         }
     },
     GET_ATTRIBUTE_VALUE_OF_ITEM("The attribute value of an item. (e.g walk speed, armor toughness..).", null, "GET_ATTRIBUTE_VALUE_OF_ITEM", Double.class, new Class[]{ItemStack.class, Attribute.class, EquipmentSlot.class}, new String[]{"", "The attribute type", "The attribute's equipment slot use"}) {
@@ -226,7 +226,7 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((Entity) objects[0]).getMaxFreezeTicks();
         }
     },
-    GET_ENTITY_NEARBY_ENTITIES("A list of all entity nearby entities within a certain range.", null, "GET_ENTITY_NEARBY_ENTITIES", List.class, new Class[]{Entity.class, Double.class, Double.class, Double.class}, new String[]{"", "x offset", "y offset", "z offset"}) {
+    GET_ENTITY_NEARBY_ENTITIES("A list of all entity nearby entities within a certain range.", null, "GET_ENTITY_NEARBY_ENTITIES", Entity[].class, new Class[]{Entity.class, Double.class, Double.class, Double.class}, new String[]{"", "x offset", "y offset", "z offset"}) {
         @Override
         public Object getParameter(Object... objects) {
             List<Entity> entities = ((Entity) objects[0]).getNearbyEntities((Double) objects[1], (Double) objects[2], (Double) objects[3]);
@@ -234,7 +234,7 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return entities;
         }
     },
-    GET_ENTITY_NEAREST_ENTITY("The nearest entity to an entity", null, "GET_ENTITY_NEAREST_ENTITY", List.class, new Class[]{Entity.class, Double.class, Double.class, Double.class}, new String[]{"", "x offset", "y offset", "z offset"}) {
+    GET_ENTITY_NEAREST_ENTITY("The nearest entity to an entity", null, "GET_ENTITY_NEAREST_ENTITY", Entity.class, new Class[]{Entity.class, Double.class, Double.class, Double.class}, new String[]{"", "x offset", "y offset", "z offset"}) {
         @Override
         public Object getParameter(Object... objects) {
             List<Entity> entities = ((Entity) objects[0]).getNearbyEntities((Double) objects[1], (Double) objects[2], (Double) objects[3]);
@@ -244,10 +244,10 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return entities.get(0);
         }
     },
-    GET_ENTITY_PASSENGERS("The entity's passengers.", null, "GET_ENTITY_PASSENGERS", List.class, new Class[]{Entity.class}, new String[]{""}) {
+    GET_ENTITY_PASSENGERS("The entity's passengers.", null, "GET_ENTITY_PASSENGERS", Entity[].class, new Class[]{Entity.class}, new String[]{""}) {
         @Override
         public Object getParameter(Object... objects) {
-            return ((Entity) objects[0]).getPassengers();
+            return ((Entity) objects[0]).getPassengers().toArray();
         }
     },
     GET_ENTITY_PORTAL_COOLDOWN("The cooldown which an entity can't enter a portal.", null, "GET_ENTITY_PORTAL_COOLDOWN", Integer.class, new Class[]{Entity.class}, new String[]{""}) {
@@ -256,10 +256,10 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((Entity) objects[0]).getPortalCooldown();
         }
     },
-    GET_ENTITY_SCOREBOARD_TAGS("", null, "GET_ENTITY_SCOREBOARD_TAGS", List.class, new Class[]{Entity.class}, new String[]{""}) {
+    GET_ENTITY_SCOREBOARD_TAGS("", null, "GET_ENTITY_SCOREBOARD_TAGS", String[].class, new Class[]{Entity.class}, new String[]{""}) {
         @Override
         public Object getParameter(Object... objects) {
-            return ((Entity) objects[0]).getScoreboardTags();
+            return ((Entity) objects[0]).getScoreboardTags().toArray();
         }
     },
     GET_ENTITY_SPAWN_CATEGORY("The spawn category of an entity (e.g sheep - ANIMAL).", null, "GET_ENTITY_SPAWN_CATEGORY", SpawnCategory.class, new Class[]{Entity.class}, new String[]{""}) {
@@ -298,12 +298,12 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((Entity) objects[0]).getWidth();
         }
     },
-    GET_FILTERED_LIST_OF_NEARBY_ENTITIES_OF_LOCATION("A list of nearby entities from a location but filtered by EntiyType.", null, "GET_FILTERED_LIST_OF_NEARBY_ENTITIES_OF_LOCATION", List.class, new Class[]{Location.class, Double.class, Double.class, Double.class, EntityType.class}, new String[]{"", "x offset", "y offset", "z offset", "The entity type filter"}) {
+    GET_FILTERED_LIST_OF_NEARBY_ENTITIES_OF_LOCATION("A list of nearby entities from a location but filtered by EntiyType.", null, "GET_FILTERED_LIST_OF_NEARBY_ENTITIES_OF_LOCATION", Entity[].class, new Class[]{Location.class, Double.class, Double.class, Double.class, EntityType.class}, new String[]{"", "x offset", "y offset", "z offset", "The entity type filter"}) {
         @Override
         public Object getParameter(Object... objects) {
             Location loc = ((Location) objects[0]);
 
-            return loc.getWorld().getNearbyEntities(loc, (Double) objects[1], (Double) objects[2], (Double) objects[3], entity -> entity.getType().equals(objects[4]));
+            return loc.getWorld().getNearbyEntities(loc, (Double) objects[1], (Double) objects[2], (Double) objects[3], entity -> entity.getType().equals(objects[4])).toArray();
         }
     },
     GET_FIRST_LINE_OF_SIGHT_ENTITY("The entity which this entity looks at.", null, "GET_FIRST_LINE_OF_SIGHT_ENTITY", Entity.class, new Class[]{LivingEntity.class, Double.class}, new String[]{"The entity which is looking", "The range"}) {
@@ -868,11 +868,11 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((Player) objects[0]).getLastPlayed();
         }
     },
-    GET_LIST_OF_NEARBY_ENTITIES_OF_LOCATION("A list of nearby entities from a location.", null, "GET_LIST_OF_NEARBY_ENTITIES_OF_LOCATION", List.class, new Class[]{Location.class, Double.class, Double.class, Double.class}, new String[]{"", "x offset", "y offset", "z offset"}) {
+    GET_LIST_OF_NEARBY_ENTITIES_OF_LOCATION("A list of nearby entities from a location.", null, "GET_LIST_OF_NEARBY_ENTITIES_OF_LOCATION", Entity[].class, new Class[]{Location.class, Double.class, Double.class, Double.class}, new String[]{"", "x offset", "y offset", "z offset"}) {
         @Override
         public Object getParameter(Object... objects) {
             Location loc = ((Location) objects[0]);
-            return loc.getWorld().getNearbyEntities(loc, (Double) objects[1], (Double) objects[2], (Double) objects[3]);
+            return loc.getWorld().getNearbyEntities(loc, (Double) objects[1], (Double) objects[2], (Double) objects[3]).toArray();
         }
     },
     GET_LIVING_ENTITY_ABSORPTION_AMOUNT("The entity's absorption hearts (This effect given by golden apple, or code).", null, "GET_LIVING_ENTITY_ABSORPTION_AMOUNT", Double.class, new Class[]{LivingEntity.class}, new String[]{""}) {

@@ -135,7 +135,7 @@ public class CreationsManager {
             List<FunctionTree> list = map.get(event);
             for (FunctionTree functionTree : list)
                 if(functionTree == null || !functionTree.isValid()) {
-                    Logging.log("There is an invalid Event on creation "+creation+". Event: "+event.getKey()+". Function: "+functionTree,LoggingOptions.ERROR);
+                    Logging.log("There is an invalid Event on creation "+creation+". Event: "+event.getKey()+". FunctionTree" +functionTree,LoggingOptions.ERROR);
                     return false;
                 }
         }
