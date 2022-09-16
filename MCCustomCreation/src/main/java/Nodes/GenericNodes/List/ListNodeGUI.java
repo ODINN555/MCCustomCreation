@@ -27,7 +27,6 @@ public class ListNodeGUI extends GUI_DisplayGUI{
 
     @Override
     public void onClick(InventoryClickEvent event){
-        Logging.log("on click in listNodeGui", LoggingOptions.TEST);
         if(event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR)
             return;
 
@@ -50,7 +49,6 @@ public class ListNodeGUI extends GUI_DisplayGUI{
             getCurrentTree().setNext(nextArr);
             nextTree.setPrev(getCurrentTree());
 
-            Logging.log("listType: "+this.listType,LoggingOptions.TEST);
             GUI_ChooseGUI gui = new GUI_ChooseGUI(this.listType,nextTree);
             next(gui,false);
         }else super.onClick(event);
@@ -58,7 +56,6 @@ public class ListNodeGUI extends GUI_DisplayGUI{
 
     @Override
     public void onOpening() {
-        Logging.log("onOpen current chain: "+ getHandler().getCurrentChainable(),LoggingOptions.TEST);
         this.primitives = new Class[getCurrentTree().getNext().length];
         for (int i = 0; i < getCurrentTree().getNext().length; i++)
             primitives[i] = listType;

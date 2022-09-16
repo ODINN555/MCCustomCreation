@@ -56,8 +56,6 @@ public class GUI_ChooseGUI extends ListableGUI implements IReturnable {
                 .map(node -> {
                     if(node instanceof IGenericNode) {
                     IGenericNode gnode = ((IGenericNode) node).cloneGeneric();
-                    Logging.log("genric: "+gnode.getKeyAsDisplay(), LoggingOptions.TEST);
-                    Logging.log("return type: "+returnType, LoggingOptions.TEST);
 
                     return gnode.onGenericChosen(returnType) ? gnode : null;
                     }else return node;

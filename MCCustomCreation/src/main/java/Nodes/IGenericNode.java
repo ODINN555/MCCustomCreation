@@ -23,6 +23,8 @@ public interface IGenericNode extends IReturningNode{
 
     Class getGenericType();
 
+    void setGenericType(Class type);
+
     default Object onGenericExecution(FunctionTree func, LivingEntity executor, ItemStack item){
 
         // same as executeFunction just without the generic, if needed the generic node will override the method

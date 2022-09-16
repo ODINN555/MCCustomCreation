@@ -33,13 +33,12 @@ public class CreationsManager {
     public CreationsManager(INodeFileManager fileManager){
         creations = new HashMap<>();
         this.fileManager = fileManager;
-        init();
     }
 
     /**
      * initializes the creations for the manager
      */
-    private void init(){
+    public void init(){
         if(fileManager == null) {
             Logging.log("File manager is null, so could not initialize the CreationsManager.", LoggingOptions.ERROR);
             return;
@@ -135,7 +134,7 @@ public class CreationsManager {
             List<FunctionTree> list = map.get(event);
             for (FunctionTree functionTree : list)
                 if(functionTree == null || !functionTree.isValid()) {
-                    Logging.log("There is an invalid Event on creation "+creation+". Event: "+event.getKey()+". FunctionTree" +functionTree,LoggingOptions.ERROR);
+                    Logging.log("There is an invalid Event on creation "+creation+". Event: "+event.getKey()+". FunctionTree: " +functionTree,LoggingOptions.ERROR);
                     return false;
                 }
         }

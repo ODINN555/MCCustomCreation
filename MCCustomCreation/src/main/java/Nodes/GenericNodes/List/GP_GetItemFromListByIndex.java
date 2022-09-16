@@ -37,6 +37,11 @@ public class GP_GetItemFromListByIndex implements IGenericNode, IParameter {
         return this.returnType;
     }
 
+    @Override
+    public void setGenericType(Class type) {
+        this.returnType = type;
+    }
+
 
     @Override
     public String getDisplayTitle() {
@@ -65,7 +70,6 @@ public class GP_GetItemFromListByIndex implements IGenericNode, IParameter {
 
     @Override
     public Class[] getReceivedTypes() {
-        Logging.log("generic type: "+getGenericType(), LoggingOptions.TEST);
         return new Class[]{Array.newInstance(getGenericType(),1).getClass(),Integer.class};
     }
 

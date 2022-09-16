@@ -3,6 +3,8 @@ package Nodes;
 import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
 import Utility.ConfigUtil.ConfigHandler;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.Bukkit;
 
@@ -157,7 +159,6 @@ public class NodesHandler {
                 return new EventInstance(null,false,null);
         }
 
-
         Map map = null;
         if(events.containsKey(name))
             map = events;
@@ -167,6 +168,7 @@ public class NodesHandler {
             map = parameterMap;
         else if(primitiveMap.containsKey(name))
             map = primitiveMap;
+
 
         if(map == null)
             return null;

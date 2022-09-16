@@ -15,8 +15,11 @@ import Nodes.Primitives.TruePrimitives.*;
 import Utility.ConfigUtil.ConfigHandler;
 import Utility.ConfigUtil.NodeSavingManagers.FileManagersSelection;
 import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -53,6 +56,21 @@ public class Main extends JavaPlugin {
         registerCommands();
         initProtocols();
         registerDefaults();
+
+        // init of creations is last.
+        // the retrieval of creations is depended on registering all nodes.
+        // a runnable is for waiting for all other plugins to register their own nodes
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this,new Runnable(){
+
+            @Override
+            public void run() {
+                if(getCreationsManager() != null)
+                    getCreationsManager().init();
+                else Logging.log("Creations Manager was not initialized! this is an error, please report this!", LoggingOptions.ERROR);
+            }
+        });
+
 
     }
 

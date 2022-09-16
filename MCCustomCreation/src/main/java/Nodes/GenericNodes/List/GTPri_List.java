@@ -2,6 +2,8 @@ package Nodes.GenericNodes.List;
 
 import GUI.DisplayGUI.GUI_DisplayGUI;
 import Nodes.*;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
@@ -51,7 +53,7 @@ public class GTPri_List implements IGenericNode, ICustomDisplayedNode,IParameter
     @Override
     public boolean onGenericChosen(Class chosenClass) {
         if(List.class.isAssignableFrom(chosenClass) || chosenClass.isArray()) {
-            setReturnType(chosenClass.getComponentType());
+            setGenericType(chosenClass.getComponentType());
             return true;
         }
 
@@ -86,11 +88,6 @@ public class GTPri_List implements IGenericNode, ICustomDisplayedNode,IParameter
         return Array.newInstance(returnType,0).getClass();
     }
 
-
-    public void setReturnType(Class returnType) {
-        this.returnType = returnType;
-    }
-
     @Override
     public Class[] getReceivedTypes() {
         return Arrays.stream(tree.getNext()).map(x-> getReturnType()).collect(Collectors.toList()).toArray(new Class[0]);
@@ -105,10 +102,15 @@ public class GTPri_List implements IGenericNode, ICustomDisplayedNode,IParameter
         return arr;
     }
 
+    @Override
     public Class getGenericType(){
         return this.returnType;
     }
 
+    @Override
+    public void setGenericType(Class type){
+        this.returnType = type;
+    }
     @Override
     public String getDisplayTitle() {
         return "List Of "+ getGenericType().getSimpleName();
