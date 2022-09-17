@@ -3,6 +3,8 @@ package Nodes;
 import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
 import Utility.ConfigUtil.ConfigHandler;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.Bukkit;
 
@@ -157,7 +159,6 @@ public class NodesHandler {
                 return new EventInstance(null,false,null);
         }
 
-
         Map map = null;
         if(events.containsKey(name))
             map = events;
@@ -168,11 +169,30 @@ public class NodesHandler {
         else if(primitiveMap.containsKey(name))
             map = primitiveMap;
 
+
         if(map == null)
             return null;
         INode node = (INode) map.get(name);
         if(node instanceof TruePrimitive)
            return ((TruePrimitive) node).clone();
         return  node;
+    }
+
+    public Map<String,INode> getAllNodes(){
+        Map<String,INode> nodes = new HashMap<>();
+        nodes.putAll(getEvents());
+        nodes.putAll(getParameterMap());
+        nodes.putAll(getPrimitiveMap());
+        nodes.putAll(getActionMap());
+        return nodes;
+    }
+
+    public <T extends INode> Map<String,T> getNodesByType(Class<T> type){
+        Map<String,T> filtered = new HashMap<>();
+        getAllNodes().forEach((key,node) -> {
+            if (type.isAssignableFrom(node.getClass()))
+                filtered.put(key,(T) node);
+        });
+        return filtered;
     }
 }

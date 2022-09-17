@@ -1,5 +1,7 @@
 package GUI;
 
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import me.ODINN.MCCustomCreation.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -25,7 +27,6 @@ public class GUIHandler implements Listener {
         this.guis = new HashMap<>();
         Bukkit.getPluginManager().registerEvents(this,Main.getInstance());
     }
-
 
     /**
      * GUIs map
@@ -82,9 +83,11 @@ public class GUIHandler implements Listener {
      */
     @EventHandler
     public void onClick(InventoryClickEvent event){
-        if(event.getInventory() != null && event.getClickedInventory() != null)
-            if(guis.containsKey(event.getWhoClicked().getUniqueId()))
+        if(event.getInventory() != null && event.getClickedInventory() != null) {
+            if (guis.containsKey(event.getWhoClicked().getUniqueId())) {
                 guis.get(event.getWhoClicked().getUniqueId()).onClick(event);
+            }
+        }
     }
 
 }

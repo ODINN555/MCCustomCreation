@@ -121,7 +121,7 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
             return true;
         }
     },
-    CHANGE_SIGN_FOR_PLAYER("Make a sign changed only for a certain player.", Material.ACACIA_SIGN, "CHANGE_SIGN_FOR_PLAYER", new Class[]{Player.class, List.class, DyeColor.class, Boolean.class}, new String[]{"", "The lines", "The text color", "If has glowing text"}) {
+    CHANGE_SIGN_FOR_PLAYER("Make a sign changed only for a certain player.", Material.ACACIA_SIGN, "CHANGE_SIGN_FOR_PLAYER", new Class[]{Player.class,Location.class, String[].class, DyeColor.class, Boolean.class}, new String[]{"","", "The lines", "The text color", "If has glowing text"}) {
         @Override
         public boolean action(Object... params) {
             ((Player) params[0]).sendSignChange((Location) params[1], (String[]) params[2], (DyeColor) params[3], (Boolean) params[4]);

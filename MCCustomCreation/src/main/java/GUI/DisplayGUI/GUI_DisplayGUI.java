@@ -6,10 +6,7 @@ import GUI.FunctionCopyHandler;
 import GUI.GUIAtrriutes.ChainGUI.IReturnable;
 import GUI.Layout.LayoutOption;
 import GUI.Layout.LayoutValue;
-import Nodes.FunctionTree;
-import Nodes.INode;
-import Nodes.IReceiveAbleNode;
-import Nodes.IReturningNode;
+import Nodes.*;
 import Utility.ItemStackUtil;
 import Utility.Logging.Logging;
 import Utility.Logging.LoggingOptions;
@@ -36,12 +33,12 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
     /**
      * Map<Slot,Index> , the Slot is a slot in the GUI and the Index is an index of the primitives array
      */
-    private Map<Integer,Integer> slotsOfIndexes;
+    protected Map<Integer,Integer> slotsOfIndexes;
 
     /**
      * the primitives that the node has to display
      */
-    private Class[] primitives;
+    protected Class[] primitives;
 
     /**
      * The returnButton ItemStack instance
@@ -51,33 +48,33 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
     /**
      * The current function tree
      */
-    private FunctionTree currentTree;
+    protected FunctionTree currentTree;
 
     /**
      * The node being displayed
      */
-    private INode node;
+    protected INode node;
 
     /**
      * The description color of the display items
      */
-    private static final ChatColor DESCRIPTION_COLOR = ChatColor.GRAY;
+    protected static final ChatColor DESCRIPTION_COLOR = ChatColor.GRAY;
 
     /**
      * If the GUI is on 'delete' mode
      */
-    private boolean deleteMode;
+    protected boolean deleteMode;
 
-    private boolean copyMode;
-    private final int COPY_ITEM_SLOT = 1;
+    protected boolean copyMode;
+    protected final int COPY_ITEM_SLOT = 1;
 
 
-    private boolean pasteMode;
-    private final int PASTE_ITEM_SLOT = 2;
+    protected boolean pasteMode;
+    protected final int PASTE_ITEM_SLOT = 2;
     /**
      * The delete mode item's slot
      */
-    private final int DEFAULT_DELETE_SLOT = 8;
+    protected final int DEFAULT_DELETE_SLOT = 8;
 
     /**
      *
@@ -85,7 +82,7 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
      * @param node a given node to display
      * @param currentTree a given current function tree
      */
-    public GUI_DisplayGUI(Class[] primitives, INode node, FunctionTree currentTree){
+    public GUI_DisplayGUI(Class[] primitives, INode node, FunctionTree currentTree) {
         super();
         this.currentTree = currentTree;
         this.node = node;
@@ -199,7 +196,10 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
 
                 Class[] nextPrimitives = ((IReceiveAbleNode) next.getCurrent()).getReceivedTypes();
                 GUI_DisplayGUI gui = new GUI_DisplayGUI(nextPrimitives,(INode) next.getCurrent(),next);
-                this.next(gui,false);
+
+                if(next.getCurrent() instanceof ICustomDisplayedNode)
+                    ((ICustomDisplayedNode) next.getCurrent()).onDisplay(next,this);
+                else this.next(gui,false);
             }
     }
 
@@ -212,6 +212,7 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
     @Override
     public void onClosing() {
         IReturnable.super.onClosing();
+        super.onClosing();
     }
 
     public ItemStack getReturnButton() {
@@ -241,12 +242,14 @@ public class GUI_DisplayGUI extends AGUI implements IReturnable {
     @Override
     public void onOpening(){
         super.onOpening();
+
         initReturnItemInInventory();
         initDisplayItems();
         initDeleteItem();
         initPasteItem();
         initCopyItem();
         updateInventory();
+
     }
 
     /**

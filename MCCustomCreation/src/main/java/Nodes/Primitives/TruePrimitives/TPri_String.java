@@ -8,6 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Arrays;
+
 public class TPri_String extends SignInputtedPrimitive {
     @Override
     public String getKey() {
@@ -28,9 +30,9 @@ public class TPri_String extends SignInputtedPrimitive {
     protected void onInput(String[] lines) {
         String str = "";
         if(lines == null || lines.length == 0)
-            Logging.log("You must enter a String! (a String is anything that is placed under two quotes. like 'hello' for example. it could be number,sentence,letter. anything.)", LoggingOptions.ERROR);
+            Logging.log("You must enter a String! (a String is any combination of characters, like 'Hello World' or 'abc123@#$...' a string can be anything but empty)", LoggingOptions.ERROR);
         else for (int i = 0; i < lines.length; i++)
-            str+=lines[i] == null ? "" : (i== 0 ?"" : " ")+lines[i];
+            str += lines[i] == null || lines[i].equalsIgnoreCase(" ") || lines[i].equalsIgnoreCase("")? "" : (i == 0 ? "" : " ") + lines[i];
 
         str = ChatColor.translateAlternateColorCodes('&',str);
         setValue(str);

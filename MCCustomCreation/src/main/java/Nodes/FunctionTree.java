@@ -3,6 +3,8 @@ package Nodes;
 import Nodes.Events.EventInstance;
 import Nodes.Events.IEvent;
 import Utility.ConfigUtil.Serialization.Serializations;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
@@ -61,6 +63,9 @@ public class FunctionTree implements Serializable,Cloneable {
             return null;
         }
 
+
+        if(func.getCurrent() instanceof IGenericNode)
+            return ((IGenericNode) func.getCurrent()).onGenericExecution(func,executor,item);
 
         if(func.getCurrent() instanceof IParameter){
             IParameter param = (IParameter) func.getCurrent();
@@ -191,6 +196,9 @@ public class FunctionTree implements Serializable,Cloneable {
             map.put("Event", ((EventInstance) tree.getCurrent()).getKey());
         }
 
+        if(tree.getCurrent() instanceof  IGenericNode){
+            map.put("GenericType",((IGenericNode) tree.getCurrent()).getGenericType().getName());
+        }
         return map;
 
     }
@@ -207,21 +215,24 @@ public class FunctionTree implements Serializable,Cloneable {
             return null;
 
         FunctionTree tree = new FunctionTree(NodesHandler.INSTANCE.getNodeByName((String) map.get("Name")),null,prev);
-        if(tree.getCurrent() instanceof EventInstance)
-            tree.setCurrent(new EventInstance((IEvent) NodesHandler.INSTANCE.getNodeByName((String) map.get("Event")), (Boolean) map.get("Cancelled"),creation));
 
-        if(tree.getCurrent() instanceof TruePrimitive) {
-            ((TruePrimitive) tree.getCurrent()).setValue(Serializations.deserialize((byte[]) map.get("Value"), Class.forName((String) map.get("Class"))));
-        } else {
-            List<Map<String,Object>> list = (List) map.get("Values");
-            if(list == null || list.size() == 0)
-                return tree;
-            FunctionTree[] next = new FunctionTree[list.size()];
-            for (int i = 0; i < list.size(); i++)
-                next[i] = deserialize(tree,list.get(i),creation);
-            tree.setNext(next);
+        if(tree.getCurrent() instanceof IEvent) {
+            tree.setCurrent(new EventInstance((IEvent) NodesHandler.INSTANCE.getNodeByName((String) map.get("Event")), (Boolean) map.get("Cancelled"), creation));
         }
+        if (tree.getCurrent() instanceof IGenericNode)
+                ((IGenericNode) tree.getCurrent()).setGenericType(Class.forName((String) map.get("GenericType")));
 
+            if (tree.getCurrent() instanceof TruePrimitive) {
+                    ((TruePrimitive) tree.getCurrent()).setValue(Serializations.deserialize((byte[]) map.get("Value"), Class.forName((String) map.get("Class"))));
+            }else {
+                    List<Map<String, Object>> list = (List) map.get("Values");
+                    if (list == null || list.size() == 0)
+                        return tree;
+                    FunctionTree[] next = new FunctionTree[list.size()];
+                    for (int i = 0; i < list.size(); i++)
+                        next[i] = deserialize(tree, list.get(i), creation);
+                    tree.setNext(next);
+            }
 
         return tree;
 

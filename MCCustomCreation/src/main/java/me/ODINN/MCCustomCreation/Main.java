@@ -3,6 +3,8 @@ package me.ODINN.MCCustomCreation;
 import Commands.*;
 import Nodes.Actions.DefaultActions;
 import Nodes.Events.DefaultEvents;
+import Nodes.GenericNodes.List.GP_GetItemFromListByIndex;
+import Nodes.GenericNodes.List.GTPri_List;
 import Nodes.NodeEnum;
 import Nodes.NodesHandler;
 import Nodes.Parameters.DefaultParameters;
@@ -13,8 +15,11 @@ import Nodes.Primitives.TruePrimitives.*;
 import Utility.ConfigUtil.ConfigHandler;
 import Utility.ConfigUtil.NodeSavingManagers.FileManagersSelection;
 import Utility.ConfigUtil.NodeSavingManagers.INodeFileManager;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -51,6 +56,21 @@ public class Main extends JavaPlugin {
         registerCommands();
         initProtocols();
         registerDefaults();
+
+        // init of creations is last.
+        // the retrieval of creations is depended on registering all nodes.
+        // a runnable is for waiting for all other plugins to register their own nodes
+
+        Bukkit.getScheduler().scheduleSyncDelayedTask(this,new Runnable(){
+
+            @Override
+            public void run() {
+                if(getCreationsManager() != null)
+                    getCreationsManager().init();
+                else Logging.log("Creations Manager was not initialized! this is an error, please report this!", LoggingOptions.ERROR);
+            }
+        });
+
 
     }
 
@@ -94,8 +114,9 @@ public class Main extends JavaPlugin {
                 new TPri_String(),
                 new TPri_Float(),
                 new TPri_Double(),
-                new TPri_Byte()
-
+                new TPri_Byte(),
+                new GTPri_List(),
+                new GP_GetItemFromListByIndex()
         );
     }
 
