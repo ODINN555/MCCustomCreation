@@ -99,7 +99,16 @@ You can name the creation however you want, in this tutorial we will be calling 
  
  ***So, what are you waiting for? Go create you own Minecraft Custom Creations!***
 
-
+# Blacklisting nodes
+In the config of the plugin you will find the NodeBlackList option, which by default containing an empty list as you can see below:
+```yaml
+  NodeBlacklist: []
+```
+To add nodes to the blacklist, simply add the node's key into the list. most of the keys are the node's name fully capped and with underscore instead of space. For example the key for Teleport Entity node is TELEPORT_ENTITY.
+An example of adding several nodes to the blacklist:
+```yaml
+  NodeBlacklist: ["TELEPORT_ENTITY","SET_RESOURCE_PACK_TO_PLAYER"]
+```
 # For Developers
   It is also possible to code your own Nodes!\
   To do that you will need to add the plugin to your plugin's build path or add the following dependency of maven/gradle.\
