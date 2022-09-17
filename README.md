@@ -554,3 +554,96 @@ public class AddSerializerExample extends JavaPlugin {
 }
 
 ```
+### Adding a custom Generic Node
+```java
+package me.example.plugin;
+
+import Nodes.IGenericNode;
+import Nodes.IParameter;
+
+// note that a generic node can be any returning node, for this example we use parameter
+public class ExampleGeneric implements IGenericNode, IParameter {
+
+    // usually you would want to save the generic type
+    private Class returnType;
+
+    // constructor for cloning mostly. Can be helpful for custom GUIs
+    public ExampleGeneric(Class genericType){
+        this.returnType = genericType;
+    }
+
+    @Override
+    public boolean onGenericChosen(Class aClass) {
+        // This is when the type of the generic is chosen,
+        // some preparation can be made here.
+        this.returnType = aClass;
+        return true;
+    }
+
+    @Override
+    public IGenericNode cloneGeneric() {
+        return new ExampleGeneric(this.returnType);
+    }
+
+    @Override
+    public Class getGenericType() {
+        // for this example the generic type and return type are the same
+        // this is not always the case!
+        // (for example lists which their return type is array but the generic is the component type)
+        return this.returnType;
+    }
+
+    @Override
+    public void setGenericType(Class aClass) {
+        // for this example the generic type and return type are the same
+        // this is not always the case!
+        // (for example lists which their return type is array but the generic is the component type)
+        this.returnType = aClass;
+    }
+
+    @Override
+    public String getDisplayTitle() {
+        // the display title of the node in the Display GUI.
+        // Sometimes generic nodes have weird displays, so this is to override it.
+        return "Example Generic For Type "+returnType.getSimpleName();
+    }
+
+    @Override
+    public Object getParameter(Object... objects) {
+        // note that the objects are the same type as the saved returnType
+        return "Example generic: "+objects[0].toString();
+    }
+
+    @Override
+    public Class getReturnType() {
+        // for this example the generic type and return type are the same
+        // this is not always the case!
+        // (for example lists which their return type is array but the generic is the component type)
+        return this.returnType;
+    }
+
+    @Override
+    public String getKey() {
+        return "EXAMPLE_GENERIC";
+    }
+
+    @Override
+    public String getDescription() {
+        return "An example for generic";
+    }
+
+    @Override
+    public Class[] getReceivedTypes() {
+        // this is where we use the saved returnType,
+        // we set the wanted value in the onGenericChosen function
+        // and here we use it to declare which types should be received
+        return new Class[]{returnType};
+    }
+
+    @Override
+    public String[] getReceivedTypesDescriptions() {
+        return new String[]{"The example generic"};
+    }
+}
+
+```
