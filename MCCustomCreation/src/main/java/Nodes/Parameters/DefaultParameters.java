@@ -3,6 +3,8 @@ package Nodes.Parameters;
 import Nodes.IParameter;
 import Nodes.NodeEnum;
 import Nodes.NodeItemStack;
+import Utility.Logging.Logging;
+import Utility.Logging.LoggingOptions;
 import Utility.PDCUtil;
 import com.google.common.collect.Multimap;
 import org.bukkit.*;
@@ -1674,6 +1676,18 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             Double min = ((Double) objects[0]);
             Double max = ((Double) objects[1]);
             return (Math.random() * (max-min))  + min;
+        }
+    },
+    // Lists
+    COMBINE_STRING_LIST_INTO_STRING("Combine all Strings of a list into a string. (each string will be spaced automatically)",Material.LIGHT_BLUE_STAINED_GLASS_PANE,"COMBINE_STRING_LIST_INTO_STRING",String.class,new Class[]{String[].class},new String[]{"The list"}){
+        @Override
+        public Object getParameter(Object... objects){
+            String str = "";
+            String[] arr = (String[]) objects[0];
+            for (String s : arr)
+                str+= s+" ";
+
+            return str;
         }
     },
     //TODO add primitives actions (like NOT, and equals)
