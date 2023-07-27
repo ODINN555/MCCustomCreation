@@ -6,7 +6,9 @@
  It will let you create any ability you have ever thought of without touching a single line of code!
 
 The plugin uses GUIs and components named "Nodes" that the player can combine together to make his own custom abilities to sepcific events. The sum of all abilities in a single item are called a "Creation".
- 
+
+![Custom Events!](/PageImages/Events.jpg)
+![Many Possibilites!](/PageImages/actions_preview.jpg)
 # Setup
   Download the plugin and put it in the server's plugins folder.
   This plugin requires ProtocolLib, so download it and put it in the server's plugins folder as well.
