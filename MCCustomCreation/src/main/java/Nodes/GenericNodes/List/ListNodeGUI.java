@@ -15,7 +15,14 @@ import java.util.stream.Collectors;
 
 public class ListNodeGUI extends GUI_DisplayGUI{
 
+    /**
+     * The generic type of the list
+     */
     private Class listType;
+
+    /**
+     * The slot for the "add item"
+     */
     private final int ADD_NODE_ITEM_SLOT = 7;
 
     public ListNodeGUI(GTPri_List listNode, FunctionTree currentTree) {
@@ -65,6 +72,9 @@ public class ListNodeGUI extends GUI_DisplayGUI{
         updateInventory();
     }
 
+    /**
+     * initializes the "add item" button in the inventory
+     */
     private void initDefaultAddNodeItem(){
         getInventory().setItem(ADD_NODE_ITEM_SLOT,ItemStackUtil.newItemStack(Material.CRAFTING_TABLE,ChatColor.GREEN+"Add Value +"));
     }

@@ -178,6 +178,10 @@ public class NodesHandler {
         return  node;
     }
 
+    /**
+     *
+     * @return a map of all nodes
+     */
     public Map<String,INode> getAllNodes(){
         Map<String,INode> nodes = new HashMap<>();
         nodes.putAll(getEvents());
@@ -187,6 +191,12 @@ public class NodesHandler {
         return nodes;
     }
 
+    /**
+     *
+     * @param type a given class type
+     * @param <T> the node type
+     * @return all nodes that are assignable from the given type
+     */
     public <T extends INode> Map<String,T> getNodesByType(Class<T> type){
         Map<String,T> filtered = new HashMap<>();
         getAllNodes().forEach((key,node) -> {

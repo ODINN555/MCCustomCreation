@@ -12,6 +12,9 @@ import java.lang.reflect.Array;
 
 public class GP_GetItemFromListByIndex implements IGenericNode, IParameter {
 
+    /**
+     *  The generic type of the list
+     */
     private Class returnType;
 
     public GP_GetItemFromListByIndex(Class returnType) {

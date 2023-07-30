@@ -1,5 +1,7 @@
 package Nodes;
 
+import Utility.Logging.Logging;
+
 public interface NodeEnum{
 
     /**
@@ -14,7 +16,8 @@ public interface NodeEnum{
      * @param <T> the enum's type
      */
     static <T extends Enum<T> & INode> void registerDefaults(Class<T> enumm){
-        NodesHandler.INSTANCE.register(enumm.getEnumConstants());
+            NodesHandler.INSTANCE.register(enumm.getEnumConstants());
+
     }
 
 }

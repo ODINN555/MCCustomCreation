@@ -24,6 +24,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -232,7 +233,6 @@ public enum DefaultParameters implements IParameter, NodeEnum {
         @Override
         public Object getParameter(Object... objects) {
             List<Entity> entities = ((Entity) objects[0]).getNearbyEntities((Double) objects[1], (Double) objects[2], (Double) objects[3]);
-            entities.remove(0);
             return entities;
         }
     },
@@ -1286,14 +1286,14 @@ public enum DefaultParameters implements IParameter, NodeEnum {
             return ((World) objects[0]).getFullTime();
         }
     },
-    GET_WORLD_GAME_RULE_BOOLEAN_VALUE("A world's game rule which his value is a boolean.", null, "GET_WORLD_GAME_RULE_BOOLEAN_VALUE", Object.class, new Class[]{World.class, GameRule.class}, new String[]{"", "A boolean game rule"}) {
+    GET_WORLD_GAME_RULE_BOOLEAN_VALUE("A world's game rule which his value is a boolean.", null, "GET_WORLD_GAME_RULE_BOOLEAN_VALUE", Boolean.class, new Class[]{World.class, GameRule.class}, new String[]{"", "A boolean game rule"}) {
         @Override
         public Object getParameter(Object... objects) {
 
             return (Boolean) ((World) objects[0]).getGameRuleValue((GameRule) objects[1]);
         }
     },
-    GET_WORLD_GAME_RULE_INTEGER_VALUE("A world's game rule which his value is an integer.", null, "GET_WORLD_GAME_RULE_INTEGER_VALUE", Object.class, new Class[]{World.class, GameRule.class}, new String[]{"", "An integer game rule"}) {
+    GET_WORLD_GAME_RULE_INTEGER_VALUE("A world's game rule which his value is an integer.", null, "GET_WORLD_GAME_RULE_INTEGER_VALUE", Integer.class, new Class[]{World.class, GameRule.class}, new String[]{"", "An integer game rule"}) {
         @Override
         public Object getParameter(Object... objects) {
 
