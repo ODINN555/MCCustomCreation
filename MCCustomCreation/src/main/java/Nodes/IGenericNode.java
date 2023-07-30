@@ -10,10 +10,22 @@ import java.util.Arrays;
 
 public interface IGenericNode extends IReturningNode{
 
+    /**
+     * The default generic node material
+     */
     Material GENERIC_NODE_MATERIAL = Material.WHITE_STAINED_GLASS_PANE;
 
+    /**
+     * This is called when a generic type is chosen
+     * @param chosenClass a given class chosen
+     * @return if the node supports the given chosen class
+     */
     boolean onGenericChosen(Class chosenClass);
 
+    /**
+     *
+     * @return a clone of the node's instance
+     */
     IGenericNode cloneGeneric();
 
     @Override
@@ -21,10 +33,25 @@ public interface IGenericNode extends IReturningNode{
       return  new NodeItemStack(GENERIC_NODE_MATERIAL, ChatColor.WHITE+getDisplayTitle(),null,1,this);
     }
 
+    /**
+     *
+     * @return The current generic type of this node
+     */
     Class getGenericType();
 
+    /**
+     * sets the current generic type of this node
+     * @param type a given type
+     */
     void setGenericType(Class type);
 
+    /**
+     * This is a sort of override for the execute function in FunctionTree. If different execution needed, override this method. See the List node for an example
+     * @param func a given function tree
+     * @param executor a given executor
+     * @param item a given item
+     * @return The object that is returned when executing this node
+     */
     default Object onGenericExecution(FunctionTree func, LivingEntity executor, ItemStack item){
 
         // same as executeFunction just without the generic, if needed the generic node will override the method
@@ -64,5 +91,9 @@ public interface IGenericNode extends IReturningNode{
         return null;
     }
 
+    /**
+     *
+     * @return the display title of this node
+     */
     String getDisplayTitle();
 }

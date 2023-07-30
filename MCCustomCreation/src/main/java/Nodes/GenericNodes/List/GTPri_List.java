@@ -15,7 +15,14 @@ import java.util.stream.Collectors;
 
 public class GTPri_List implements IGenericNode, ICustomDisplayedNode,IParameter {
 
+    /**
+     * The generic type
+     */
     private Class returnType;
+
+    /**
+     * The tree instance of where the current is this node
+     */
     private FunctionTree tree;
 
     public GTPri_List(){
