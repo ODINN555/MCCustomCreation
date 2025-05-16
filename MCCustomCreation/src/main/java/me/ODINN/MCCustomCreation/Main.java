@@ -25,6 +25,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.List;
+import java.util.logging.Level;
 
 public class Main extends JavaPlugin {
 
@@ -48,6 +49,8 @@ public class Main extends JavaPlugin {
      */
     private static ProtocolManager ProtocolsManager;
 
+    private static String SERVER_VERSION;
+
     @Override
     public void onEnable(){
         INSTANCE = this;
@@ -56,6 +59,8 @@ public class Main extends JavaPlugin {
         registerCommands();
         initProtocols();
         registerDefaults();
+        SERVER_VERSION = Bukkit.getBukkitVersion().split("-")[0];
+        Bukkit.getLogger().log(Level.INFO,"Server Version: "+SERVER_VERSION);
 
         // init of creations is last.
         // the retrieval of creations is depended on registering all nodes.

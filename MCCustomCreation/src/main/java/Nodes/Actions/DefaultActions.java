@@ -9,6 +9,7 @@ import Utility.Logging.Logging;
 import Utility.Logging.LoggingOptions;
 import Utility.PDCUtil;
 import me.ODINN.MCCustomCreation.Main;
+import me.ODINN.MCCustomCreation.MultiVersion.VersionRange;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
@@ -1217,6 +1218,11 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
      */
     private static final Material DEFAULT_ACTION_MATERIAL = Material.PURPLE_STAINED_GLASS_PANE;
     private static final ChatColor DEFAULT_NAME_COLOR = ChatColor.LIGHT_PURPLE;
+
+    /**
+     * The node's supportedVersions
+     */
+    private VersionRange supportedVersions;
     /**
      * The node's description
      */
@@ -1267,7 +1273,18 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
      * @param receivedTypes the node's received types
      * @param receivedTypesDescriptions the node's received types descriptions
      */
+    DefaultActions(VersionRange supportedVersions, String description, ItemStack item, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
+        this.supportedVersions = supportedVersions;
+        this.description = description;
+        this.mat = item.getType();
+        this.item = item;
+        this.key = key;
+        this.receivedTypes = receivedTypes;
+        this.receivedTypesDescriptions = receivedTypesDescriptions;
+    }
+    // TEMPORARY
     DefaultActions(String description, ItemStack item, String key, Class[] receivedTypes, String[] receivedTypesDescriptions) {
+        this.supportedVersions = new VersionRange("1.8");
         this.description = description;
         this.mat = item.getType();
         this.item = item;
@@ -1316,5 +1333,9 @@ public enum DefaultActions implements IAction, NodeEnum, IDuplicableAction {
 
     }
 
+    @Override
+    public VersionRange getVersionRange(){
+        return this.supportedVersions;
+    }
 
 }

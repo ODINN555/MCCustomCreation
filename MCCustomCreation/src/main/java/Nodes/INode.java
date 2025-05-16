@@ -1,5 +1,7 @@
 package Nodes;
 
+import me.ODINN.MCCustomCreation.MultiVersion.IVersionSupporter;
+
 import java.io.Serializable;
 import java.util.Locale;
 
@@ -9,7 +11,7 @@ import java.util.Locale;
  * *node - a node is any type of function.
  *         like in code a function can be a function which returns a value or not, receive values... etc.
  */
-public interface INode extends Cloneable , Serializable {
+public interface INode extends Cloneable , Serializable , IVersionSupporter {
 
     /**
      * @return a node item referencing this node
